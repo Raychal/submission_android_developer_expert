@@ -24,3 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "SubmissionAndroidDeveloperExpert"
 include(":app")
+include(":core")
+include(":favorite")
