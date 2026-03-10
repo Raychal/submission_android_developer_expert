@@ -1,5 +1,6 @@
 package com.raychal.core.data.source.remote.response
 
+import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
 
 data class GameResponse(
@@ -9,6 +10,8 @@ data class GameResponse(
     val name: String,
     @field:SerializedName("released")
     val released: String?,
+    @field:SerializedName("description_raw")
+    val descriptionRaw: String? = null,
     @field:SerializedName("tba")
     val tba: Boolean,
     @field:SerializedName("metacritic")

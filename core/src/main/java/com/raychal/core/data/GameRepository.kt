@@ -35,7 +35,10 @@ class GameRepository(
         emit(Resource.Loading())
         try {
             val response = apiService.getDetailGame(id)
-            val domainData = DataMapper.mapResponseToDomain(response)
+            val screenshotsResponse = try { apiService.getDetailGameScreenshots(id) } catch (e: Exception) { null }
+            val moviesResponse = try { apiService.getDetailGameMovies(id) } catch (e: Exception) { null }
+
+            val domainData = DataMapper.mapResponseToDomain(response, screenshotsResponse, moviesResponse)
 
             val localGame = gameDao.getGameById(id).first()
             val finalData = domainData.copy(isFavorite = localGame?.isFavorite ?: false)
@@ -62,10 +65,15 @@ class GameRepository(
     }
 
     override suspend fun setFavoriteGame(game: Game, state: Boolean) {
-        val gameEntity = DataMapper.mapDomainToEntity(game)
-        gameEntity.isFavorite = state
+        val gameEntity = DataMapper.mapDomainToEntity(game.copy(isFavorite = state))
         withContext(Dispatchers.IO) {
-            gameDao.insertSingleGame(gameEntity)
+            if (state) {
+                // Simpan semua data detail (denormalisasi)
+                gameDao.insertSingleGame(gameEntity)
+            } else {
+                // Hapus dari database jika tidak lagi favorite
+                gameDao.deleteGame(gameEntity)
+            }
         }
     }
 }

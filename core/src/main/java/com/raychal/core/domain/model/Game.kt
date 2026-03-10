@@ -4,6 +4,7 @@ data class Game(
     val id: Int,
     val name: String,
     val released: String? = "N/A",
+    val descriptionRaw: String? = null,
     val tba: Boolean,
     val metaScore: Int,
     val backgroundImage: String?,
@@ -15,5 +16,6 @@ data class Game(
     val tags: List<String>,
     val esrbRating: String?,
     val screenshots: List<String>,
+    val movies: List<GameMovie>,
     val isFavorite: Boolean = false
 )

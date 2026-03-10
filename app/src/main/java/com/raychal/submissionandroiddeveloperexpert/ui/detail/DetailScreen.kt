@@ -1,31 +1,74 @@
 package com.raychal.submissionandroiddeveloperexpert.ui.detail
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.raychal.core.R
 import com.raychal.core.domain.model.Game
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.ui.components.EmptyOrErrorState
-import org.koin.compose.koinInject
+import com.raychal.core.ui.components.Label
+import com.raychal.core.ui.components.StarRatingBar
+import com.raychal.core.ui.theme.background
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,16 +77,18 @@ fun DetailScreen(
     viewModel: DetailViewModel = koinViewModel(),
     navigationManager: NavigationManager = koinInject()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(gameId) {
         viewModel.sendIntent(DetailIntent.GetDetail(gameId))
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.detail)) },
+                modifier = Modifier.fillMaxWidth(),
+                title = { Text(stringResource(R.string.detail), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navigationManager.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -59,9 +104,18 @@ fun DetailScreen(
                             )
                         }
                     }
-                }
+                },
+                windowInsets = WindowInsets(0,0,0,0),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = background,
+                    navigationIconContentColor = Color.White,
+                    actionIconContentColor = Color.White,
+                    titleContentColor = Color.White
+                )
             )
-        }
+        },
+        containerColor = background,
+        contentColor = Color.White
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -87,52 +141,304 @@ fun DetailScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameDetailContent(game: Game) {
+
+    val platforms = mutableListOf<Pair<String, Int>>()
+
+    game.platforms.forEach {
+        when (it.lowercase()) {
+            "pc" -> platforms += Pair("PC", R.drawable.pc)
+            "playstation", "playstation 5", "playstation 4", "playstation 3", "playstation 2", "psp", "ps vita" -> platforms += Pair("Play Station", R.drawable.play_station)
+            "xbox", "xbox one", "xbox series s/x", "xbox 360" -> platforms += Pair("Xbox", R.drawable.xbox)
+            "nintendo", "nintendo switch", "nintendo 3ds", "nintendo ds", "nintendo dsi" -> platforms += Pair("Nintendo", R.drawable.nintendo)
+            "linux" -> platforms += Pair("Linux", R.drawable.linux)
+            "macos" -> platforms += Pair("Mac", R.drawable.mac)
+            "ios" -> platforms += Pair("ios", R.drawable.ios)
+            "android" -> platforms += Pair("Android", R.drawable.android)
+            "web" -> platforms += Pair("Web", R.drawable.browser)
+        }
+    }
+
+    val colorFontMetaScore = when (game.metaScore) {
+        in 0..50 -> Color.Red
+        in 51..74 -> Color(0xFFF0C04F)
+        else -> Color(0xFF6DC849)
+    }
+
+    val colorBorderMetaScore = when (game.metaScore) {
+        in 0..50 -> Color.Red.copy(alpha = 0.5f)
+        in 51..74 -> Color(0xFF786434)
+        else -> Color(0xFF3F6330)
+    }
+
+    val ratingTopImage = when (game.ratingTop) {
+        5 -> R.drawable.exceptional
+        else -> R.drawable.recommended
+    }
+
+    val shape = RoundedCornerShape(8.dp)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         AsyncImage(
             model = game.backgroundImage,
             contentDescription = game.name,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(250.dp),
+                .height(250.dp)
+                .clip(RoundedCornerShape(16.dp)),
             contentScale = ContentScale.Crop
         )
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val maxVisible = 3
+                val displayPlatforms = platforms.distinctBy { it.second }.take(maxVisible)
+                val remainingCount = platforms.distinctBy { it.second }.size - maxVisible
+
+                displayPlatforms.forEach {
+                    Icon(
+                        painter = painterResource(id = it.second),
+                        contentDescription = it.first,
+                        tint = Color.White
+                    )
+                }
+
+                if (remainingCount > 0) {
+                    Text(
+                        text = "+$remainingCount",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White
+                    )
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .background(Color.Transparent, shape)
+                        .border(1.dp, colorBorderMetaScore,shape)
+                        .padding(4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = game.metaScore.toString(),
+                        style = MaterialTheme.typography.bodySmall.merge(color = colorFontMetaScore)
+                    )
+                }
+                if (game.tba) {
+                    Text(
+                        text = "TBA",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+        }
         
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = game.name,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = "Rating: ${game.rating}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
+                    text = game.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 3,
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.width(16.dp))
+
+                if (game.ratingTop in listOf(5,4)) {
+                    Image(
+                        painter = painterResource(id = ratingTopImage),
+                        contentDescription = stringResource(R.string.rating),
+                        modifier = Modifier.size(30.dp),
+                        alignment = Alignment.Center,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
+            game.descriptionRaw?.let {
                 Text(
-                    text = "Released: ${game.released ?: "N/A"}",
+                    text = it,
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "About",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "ID: ${game.id}\nStatus: ${if (game.isFavorite) "Favorite" else "Not Favorite"}",
-                style = MaterialTheme.typography.bodyMedium
-            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(text = stringResource(R.string.rating), style = MaterialTheme.typography.labelLarge)
+                    Row {
+                        StarRatingBar(rating = game.rating.toFloat())
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "(${game.rating})", style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(text = stringResource(R.string.released), style = MaterialTheme.typography.labelLarge)
+                    Text(text = "${game.released}", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(text = stringResource(R.string.age_rating), style = MaterialTheme.typography.labelLarge)
+                    Text(text = "${game.esrbRating}", style = MaterialTheme.typography.bodySmall)
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(text = stringResource(R.string.last_modified), style = MaterialTheme.typography.labelLarge)
+                    Text(text = "${game.updated}", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(text = stringResource(R.string.genre), style = MaterialTheme.typography.labelLarge)
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    game.genres.forEach {
+                        Label(text = it)
+                    }
+                }
+            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(text = stringResource(R.string.tags), style = MaterialTheme.typography.labelLarge)
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    game.tags.forEach {
+                        Label(text = it)
+                    }
+                }
+            }
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(text = stringResource(R.string.screenshots), style = MaterialTheme.typography.labelLarge)
+                InfiniteHorizontalCarousel(
+                    items = game.screenshots,
+                    itemWidth = 350.dp,
+                    itemSpacing = 10.dp,
+                    contentPadding = PaddingValues(horizontal = 2.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(vertical = 12.dp)
+                ) { imageUrl ->
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .height(180.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun <T> InfiniteHorizontalCarousel(
+    items: List<T>,
+    itemWidth: Dp,
+    itemSpacing: Dp,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+    itemContent: @Composable (T) -> Unit
+) {
+    if (items.isEmpty()) return
+
+    val repeatedCount = 1000 // Big enough to feel infinite
+    val startIndex = (repeatedCount / 2) - ((repeatedCount / 2) % items.size)
+
+    val state = rememberPagerState(initialPage = startIndex) { repeatedCount }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(3000) // Auto-scroll every 3 seconds
+            state.animateScrollToPage(state.currentPage + 1)
+        }
+    }
+
+    Box(modifier = modifier) {
+        HorizontalPager(
+            state = state,
+            pageSize = PageSize.Fixed(itemWidth),
+            contentPadding = PaddingValues(horizontal = 32.dp),
+            pageSpacing = itemSpacing,
+            modifier = Modifier.fillMaxWidth()
+        ) { index ->
+            val actualIndex = index % items.size
+            val item = items[actualIndex]
+
+            Box(
+                modifier = Modifier
+                    .width(itemWidth)
+                    .graphicsLayer {
+                        val pageOffset =
+                            ((state.currentPage - index) + state.currentPageOffsetFraction).absoluteValue
+
+                        // Add a subtle scale effect
+                        scaleY = lerp(
+                            start = 0.85f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+                    }
+            ) {
+                itemContent(item)
+            }
         }
     }
 }

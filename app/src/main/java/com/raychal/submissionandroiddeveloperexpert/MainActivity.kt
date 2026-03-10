@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -45,7 +44,8 @@ import com.raychal.submissionandroiddeveloperexpert.ui.detail.DetailScreen
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeIntent
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeScreen
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeViewModel
-import com.raychal.submissionandroiddeveloperexpert.ui.theme.SubmissionAndroidDeveloperExpertTheme
+import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
+import com.raychal.core.ui.theme.background
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 
@@ -122,12 +122,12 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                                 colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = Color(0xFF151515)
+                                    containerColor = background
                                 )
                             )
                         }
                     },
-                    containerColor = Color(0xFF151515)
+                    containerColor = background
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,

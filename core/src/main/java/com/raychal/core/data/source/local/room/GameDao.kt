@@ -26,4 +26,7 @@ interface GameDao {
 
     @Update
     suspend fun updateFavoriteGame(game: GameEntity)
+
+    @Delete
+    suspend fun deleteGame(game: GameEntity)
 }

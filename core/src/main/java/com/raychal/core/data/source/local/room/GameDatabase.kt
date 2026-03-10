@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.raychal.core.data.source.local.entity.GameEntity
 import com.raychal.core.utils.Converters
 
-@Database(entities = [GameEntity::class], version = 3, exportSchema = false)
+@Database(entities = [GameEntity::class], version = 6, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class GameDatabase : RoomDatabase() {
     abstract fun gameDao(): GameDao

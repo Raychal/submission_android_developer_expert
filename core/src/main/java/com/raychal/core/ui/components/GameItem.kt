@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.raychal.core.R
 import com.raychal.core.domain.model.Game
+import com.raychal.core.ui.theme.backgroundCard
 
 @Composable
 fun GameItem(game: Game, modifier: Modifier = Modifier) {
@@ -72,7 +73,7 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF202020),
+            containerColor = backgroundCard,
             contentColor = Color.White
         )
     ) {
@@ -144,12 +145,12 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = stringResource(R.string.rating), style = MaterialTheme.typography.bodySmall)
+                Text(text = stringResource(R.string.rating_with_colon), style = MaterialTheme.typography.bodySmall)
                 StarRatingBar(rating = game.rating.toFloat())
                 Text(text = "(${game.rating})", style = MaterialTheme.typography.bodySmall)
             }
             Text(
-                text = stringResource(R.string.released, game.released ?: "N/A"),
+                text = stringResource(R.string.released_with_colon, game.released ?: "N/A"),
                 style = MaterialTheme.typography.bodySmall
             )
         }

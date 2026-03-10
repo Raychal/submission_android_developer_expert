@@ -28,7 +28,7 @@ import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
 import com.raychal.core.ui.components.EmptyOrErrorState
 import com.raychal.core.ui.components.GameItem
-import com.raychal.submissionandroiddeveloperexpert.ui.theme.SubmissionAndroidDeveloperExpertTheme
+import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.context.loadKoinModules

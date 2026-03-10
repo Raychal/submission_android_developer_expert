@@ -8,6 +8,13 @@
     <string name="search_text">Cari Game…</string>
     <string name="favorite">Disukai</string>
     <string name="not_favorite">Tidak disukai</string>
-    <string name="rating">Peringkat:</string>
-    <string name="released">Dirilis: %1s%</string>
+    <string name="rating_with_colon">Peringkat:</string>
+    <string name="released_with_colon">Dirilis: %1s%</string>
+    <string name="rating">Peringkat</string>
+    <string name="released">Dirilis</string>
+    <string name="genre">Genre</string>
+    <string name="age_rating">Peringkat Usia</string>
+    <string name="tags">Tagar</string>
+    <string name="screenshots">Cuplikan Layar</string>
+    <string name="last_modified">Terakhir Diubah</string>
 </resources>
