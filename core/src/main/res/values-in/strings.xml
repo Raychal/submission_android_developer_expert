@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_found">Tidak Ditemukan</string>
+    <string name="server_error">Server Error</string>
+    <string name="you_are_offline">Kamu Sedang Offline</string>
+    <string name="back">Kembali</string>
+    <string name="detail">Detail</string>
+    <string name="search_text">Cari Game…</string>
+    <string name="favorite">Disukai</string>
+    <string name="not_favorite">Tidak disukai</string>
+    <string name="rating">Peringkat:</string>
+    <string name="released">Dirilis: %1s%</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_found">Not Found</string>
+    <string name="server_error">Server Error</string>
+    <string name="you_are_offline">You Are Offline</string>
+    <string name="back">Back</string>
+    <string name="detail">Detail</string>
+    <string name="search_text">Search Games…</string>
+    <string name="favorite">Favorite</string>
+    <string name="not_favorite">Not Favorite</string>
+    <string name="rating">Rating:</string>
+    <string name="released">Released: %1$s</string>
+</resources>

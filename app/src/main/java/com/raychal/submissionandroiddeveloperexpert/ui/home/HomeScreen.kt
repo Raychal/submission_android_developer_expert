@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -38,7 +37,6 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.raychal.core.R
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
-import com.raychal.core.ui.components.EmptyOrErrorState
 import com.raychal.core.ui.components.GameItem
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -54,12 +52,15 @@ fun HomeScreen(
     val games = viewModel.gamesPagingData.collectAsLazyPagingItems()
     val isRefreshing = games.loadState.refresh is LoadState.Loading
 
+    val youAreOfflineText = stringResource(R.string.you_are_offline)
+    val serverErrorText = stringResource(R.string.server_error)
+
     LaunchedEffect(games.loadState) {
         val errorState = games.loadState.append as? LoadState.Error
             ?: games.loadState.prepend as? LoadState.Error
         
         if (errorState?.error is IOException) {
-            Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, youAreOfflineText, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -117,7 +118,7 @@ fun HomeScreen(
                     if (games.itemCount == 0) {
                         LottieNotFoundAnimation(
                             lottieFile = R.raw.no_connection,
-                            message = if (state.error is IOException) "You are offline" else "Server Error"
+                            message = if (state.error is IOException) youAreOfflineText else serverErrorText
                         )
                     }
                 }
@@ -135,7 +136,7 @@ fun HomeScreen(
 fun LottieNotFoundAnimation(
     modifier: Modifier = Modifier,
     lottieFile: Int = R.raw.search_file,
-    message: String = "Not Found"
+    message: String = stringResource(R.string.not_found)
 ) {
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(lottieFile)

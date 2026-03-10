@@ -16,9 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.raychal.core.R
 import com.raychal.core.domain.model.Game
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.ui.components.EmptyOrErrorState
@@ -41,7 +43,7 @@ fun DetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Game Detail") },
+                title = { Text(stringResource(R.string.detail)) },
                 navigationIcon = {
                     IconButton(onClick = { navigationManager.navigateUp() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -52,7 +54,7 @@ fun DetailScreen(
                         IconButton(onClick = { viewModel.sendIntent(DetailIntent.ToggleFavorite(game)) }) {
                             Icon(
                                 imageVector = if (game.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorite",
+                                contentDescription = stringResource(R.string.favorite),
                                 tint = if (game.isFavorite) Color.Red else LocalContentColor.current
                             )
                         }

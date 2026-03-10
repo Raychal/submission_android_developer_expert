@@ -30,12 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.raychal.core.R
 import com.raychal.core.navigation.NavigationCommand
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
@@ -100,7 +102,7 @@ class MainActivity : ComponentActivity() {
                                                 searchQuery = it
                                                 homeViewModel.sendIntent(HomeIntent.SearchGames(it))
                                             },
-                                            placeholder = { Text("Search Games...") },
+                                            placeholder = { Text(stringResource(R.string.search_text)) },
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .padding(end = 8.dp),
@@ -115,7 +117,7 @@ class MainActivity : ComponentActivity() {
                                         IconButton(onClick = {
                                             navigationManager.navigate(Screen.Favorite)
                                         }) {
-                                            Icon(Icons.Default.Favorite, contentDescription = "Favorite", tint = MaterialTheme.colorScheme.primary)
+                                            Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.favorite), tint = MaterialTheme.colorScheme.primary)
                                         }
                                     }
                                 },

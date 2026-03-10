@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.raychal.core.R
@@ -143,12 +144,12 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Rating:", style = MaterialTheme.typography.bodySmall)
+                Text(text = stringResource(R.string.rating), style = MaterialTheme.typography.bodySmall)
                 StarRatingBar(rating = game.rating.toFloat())
                 Text(text = "(${game.rating})", style = MaterialTheme.typography.bodySmall)
             }
             Text(
-                text = "Released: ${game.released}",
+                text = stringResource(R.string.released, game.released ?: "N/A"),
                 style = MaterialTheme.typography.bodySmall
             )
         }
