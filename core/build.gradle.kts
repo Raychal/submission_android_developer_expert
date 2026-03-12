@@ -72,6 +72,7 @@ dependencies {
     api(libs.paging.compose)
 
     api(libs.coil.compose)
+    api(libs.lottie.compose)
 
     api(platform(libs.androidx.compose.bom))
     api(libs.androidx.compose.ui)

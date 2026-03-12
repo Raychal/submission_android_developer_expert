@@ -38,6 +38,7 @@ import com.raychal.core.R
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
 import com.raychal.core.ui.components.GameItem
+import com.raychal.core.ui.components.LottieNotFoundAnimation
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.io.IOException
@@ -128,46 +129,6 @@ fun HomeScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun LottieNotFoundAnimation(
-    modifier: Modifier = Modifier,
-    lottieFile: Int = R.raw.search_file,
-    message: String = stringResource(R.string.not_found)
-) {
-    val composition by rememberLottieComposition(
-        spec = LottieCompositionSpec.RawRes(lottieFile)
-    )
-
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-        isPlaying = true,
-        speed = 1f,
-    )
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.titleLarge,
-                color = Color.White
-            )
-            LottieAnimation(
-                composition = composition,
-                progress = { progress },
-                modifier = modifier.size(250.dp),
-            )
         }
     }
 }

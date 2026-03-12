@@ -8,6 +8,7 @@
     <string name="search_text">Search Games…</string>
     <string name="favorite">Favorite</string>
     <string name="not_favorite">Not Favorite</string>
+    <string name="no_favorite_game_yet">No favorite games yet</string>
     <string name="rating_with_colon">Rating:</string>
     <string name="released_with_colon">Released: %1$s</string>
     <string name="rating">Rating</string>
