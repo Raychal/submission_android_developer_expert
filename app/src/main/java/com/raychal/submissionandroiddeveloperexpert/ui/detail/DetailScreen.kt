@@ -373,6 +373,8 @@ fun GameDetailContent(game: Game) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl)
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
                             .crossfade(true)
                             .build(),
                         contentDescription = null,

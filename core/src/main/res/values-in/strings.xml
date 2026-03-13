@@ -18,4 +18,5 @@
     <string name="tags">Tagar</string>
     <string name="screenshots">Cuplikan Layar</string>
     <string name="last_modified">Terakhir Diubah</string>
+    <string name="no_data_available">Tidak Ada Data yang Tersedia</string>
 </resources>

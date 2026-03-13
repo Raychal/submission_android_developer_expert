@@ -38,6 +38,8 @@ import com.raychal.core.R
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
 import com.raychal.core.ui.components.GameItem
+import com.raychal.core.ui.components.LineScaleProgressIndicator
+import com.raychal.core.ui.components.LoadingCard
 import com.raychal.core.ui.components.LottieNotFoundAnimation
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -51,7 +53,7 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val games = viewModel.gamesPagingData.collectAsLazyPagingItems()
-    val isRefreshing = games.loadState.refresh is LoadState.Loading
+    val isRefreshing = games.loadState.refresh is LoadState.Loading && games.itemCount > 0
 
     val youAreOfflineText = stringResource(R.string.you_are_offline)
     val serverErrorText = stringResource(R.string.server_error)
@@ -64,6 +66,8 @@ fun HomeScreen(
             Toast.makeText(context, youAreOfflineText, Toast.LENGTH_SHORT).show()
         }
     }
+
+    val isInitialLoad = games.loadState.refresh is LoadState.Loading && games.itemCount == 0
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -101,7 +105,7 @@ fun HomeScreen(
                                     .padding(16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                LineScaleProgressIndicator()
                             }
                         }
                     }
@@ -111,8 +115,18 @@ fun HomeScreen(
 
             when (val state = games.loadState.refresh) {
                 is LoadState.Loading -> {
-                    if (games.itemCount == 0) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    if (isInitialLoad) { // Tampilkan skeleton hanya saat initial load
+                        LazyVerticalStaggeredGrid(
+                            columns = StaggeredGridCells.Fixed(2),
+                            verticalItemSpacing = 4.dp,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(16.dp)
+                        ) {
+                            items(10) {
+                                LoadingCard()
+                            }
+                        }
                     }
                 }
                 is LoadState.Error -> {
