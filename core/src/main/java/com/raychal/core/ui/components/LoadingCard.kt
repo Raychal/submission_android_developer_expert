@@ -18,7 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.raychal.core.ui.theme.backgroundCard
 
 @Composable
-fun LoadingCard(modifier: Modifier = Modifier) {
+fun LoadingCard(
+    modifier: Modifier = Modifier,
+    heightForPicture: Int = 100,
+    repeat: Int = 2
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -35,26 +39,22 @@ fun LoadingCard(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
+                    .height(heightForPicture.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .shimmerEffect()
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .shimmerEffect()
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(15.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .shimmerEffect()
-            )
+            repeat(
+                times = repeat
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(15.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .shimmerEffect()
+                )
+            }
         }
     }
 }

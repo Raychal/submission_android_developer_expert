@@ -115,7 +115,7 @@ fun HomeScreen(
 
             when (val state = games.loadState.refresh) {
                 is LoadState.Loading -> {
-                    if (isInitialLoad) { // Tampilkan skeleton hanya saat initial load
+                    if (isInitialLoad) {
                         LazyVerticalStaggeredGrid(
                             columns = StaggeredGridCells.Fixed(2),
                             verticalItemSpacing = 4.dp,
