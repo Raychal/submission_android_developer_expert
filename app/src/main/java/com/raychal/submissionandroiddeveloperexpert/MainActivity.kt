@@ -3,6 +3,7 @@ package com.raychal.submissionandroiddeveloperexpert
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Row
@@ -41,12 +42,12 @@ import com.raychal.core.R
 import com.raychal.core.navigation.NavigationCommand
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
+import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
+import com.raychal.core.ui.theme.background
 import com.raychal.submissionandroiddeveloperexpert.ui.detail.DetailScreen
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeIntent
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeScreen
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeViewModel
-import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
-import com.raychal.core.ui.theme.background
 import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 
@@ -57,7 +58,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(statusBarStyle = SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.WHITE))
         setContent {
             SubmissionAndroidDeveloperExpertTheme {
                 val navController = rememberNavController()
