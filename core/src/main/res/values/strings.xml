@@ -17,6 +17,10 @@
     <string name="age_rating">Age Rating</string>
     <string name="tags">Tags</string>
     <string name="screenshots">Screenshots</string>
+    <string name="trailer">Trailer</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
     <string name="last_modified">Last Modified</string>
+    <string name="tba">tba</string>
     <string name="no_data_available">No Data Available</string>
 </resources>

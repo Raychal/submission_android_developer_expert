@@ -17,6 +17,10 @@
     <string name="age_rating">Peringkat Usia</string>
     <string name="tags">Tagar</string>
     <string name="screenshots">Cuplikan Layar</string>
+    <string name="trailer">Trailer</string>
+    <string name="pause">Jeda</string>
+    <string name="play">Mulai</string>
     <string name="last_modified">Terakhir Diubah</string>
+    <string name="tba">tba</string>
     <string name="no_data_available">Tidak Ada Data yang Tersedia</string>
 </resources>

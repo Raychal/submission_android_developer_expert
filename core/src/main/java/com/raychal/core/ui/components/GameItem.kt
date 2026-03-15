@@ -138,7 +138,7 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
                     }
                     if (game.tba) {
                         Text(
-                            text = "TBA",
+                            text = stringResource(R.string.tba).uppercase(),
                             style = MaterialTheme.typography.titleMedium
                         )
                     }

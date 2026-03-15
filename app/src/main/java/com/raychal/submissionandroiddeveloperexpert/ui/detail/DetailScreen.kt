@@ -1,8 +1,12 @@
 package com.raychal.submissionandroiddeveloperexpert.ui.detail
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +32,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +44,12 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.retain.RetainedEffect
+import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +65,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.compose.ContentFrame
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.raychal.core.R
@@ -149,6 +162,71 @@ fun DetailScreen(
 @Composable
 fun GameDetailContent(game: Game) {
 
+    val context = LocalContext.current
+    val player = retain {
+        ExoPlayer
+            .Builder(context.applicationContext)
+            .build()
+    }
+
+    var isPlaying by retain { mutableStateOf(false) }
+    var currentPosition by retain { mutableLongStateOf(0L) }
+    var duration by retain { mutableLongStateOf(0L) }
+    var isSeeking by retain { mutableStateOf(false) }
+    var isBuffering by retain { mutableStateOf(false) }
+    var isPlayerUiVisible by retain { mutableStateOf(false) }
+
+    var currentVideoIndex by retain { mutableIntStateOf(0) }
+
+    RetainedEffect(player) {
+        val listener = object : Player.Listener {
+            override fun onIsPlayingChanged(playing: Boolean) { isPlaying = playing }
+            override fun onPlaybackStateChanged(state: Int) {
+                isBuffering = state == Player.STATE_BUFFERING
+                if (state == Player.STATE_READY) duration = player.duration.coerceAtLeast(0)
+                if (state == Player.STATE_ENDED) {
+                    goToNextVideo()
+                }
+            }
+
+            private fun goToNextVideo() {
+                if (game.movies.isNotEmpty()) {
+                    currentVideoIndex = (currentVideoIndex + 1) % game.movies.size
+                    val nextMediaItem = MediaItem.fromUri(game.movies[currentVideoIndex].url)
+                    player.setMediaItem(nextMediaItem)
+                    player.prepare()
+                    if (isPlaying) {
+                        player.play()
+                    }
+                }
+            }
+        }
+
+        player.addListener(listener)
+
+        onRetire {
+            player.removeListener(listener)
+            player.release()
+        }
+    }
+
+    LaunchedEffect(player, isPlaying, isSeeking) {
+        while(isPlaying) {
+            if(!isSeeking) {
+                currentPosition = player.currentPosition
+            }
+            delay(16L)
+        }
+    }
+
+    LaunchedEffect(game.movies) {
+        if (game.movies.isNotEmpty()) {
+            player.setMediaItem(MediaItem.fromUri(game.movies[currentVideoIndex].url))
+            player.prepare()
+            player.play()
+        }
+    }
+
     val platforms = mutableListOf<Pair<String, Int>>()
 
     game.platforms.forEach {
@@ -237,7 +315,7 @@ fun GameDetailContent(game: Game) {
                     modifier = Modifier
                         .size(24.dp)
                         .background(Color.Transparent, shape)
-                        .border(1.dp, colorBorderMetaScore,shape)
+                        .border(1.dp, colorBorderMetaScore, shape)
                         .padding(4.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -248,7 +326,7 @@ fun GameDetailContent(game: Game) {
                 }
                 if (game.tba) {
                     Text(
-                        text = "TBA",
+                        text = stringResource(R.string.tba).uppercase(),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -368,7 +446,7 @@ fun GameDetailContent(game: Game) {
                     items = game.screenshots,
                     itemWidth = 350.dp,
                     itemSpacing = 10.dp,
-                    contentPadding = PaddingValues(horizontal = 2.dp),
+                    contentPadding = PaddingValues(32.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
@@ -390,6 +468,70 @@ fun GameDetailContent(game: Game) {
                     )
                 }
             }
+            if (game.movies.isNotEmpty()) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(text = stringResource(R.string.trailer), style = MaterialTheme.typography.labelLarge)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.Black)
+                    ) {
+                        ContentFrame(
+                            player = player,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable(
+                                    interactionSource = null,
+                                    indication = null
+                                ) {
+                                    isPlayerUiVisible = !isPlayerUiVisible
+                                },
+                            contentScale = ContentScale.FillBounds
+                        )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            AnimatedVisibility(
+                                visible = isPlayerUiVisible,
+                                enter = fadeIn(),
+                                exit = fadeOut(),
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                PlayerUi(
+                                    isPlaying = isPlaying,
+                                    isBuffering = isBuffering,
+                                    isSeeking = isSeeking,
+                                    currentPosition = currentPosition,
+                                    duration = duration,
+                                    onSeekBarPositionChange = {
+                                        isSeeking = true
+                                        currentPosition = it
+                                    },
+                                    onSeekBarPositionChangeFinished = {
+                                        player.seekTo(it)
+                                        isSeeking = false
+                                    },
+                                    onPlayPauseClick = {
+                                        when {
+                                            !isPlaying && player.playbackState == Player.STATE_ENDED -> {
+                                                player.seekTo(0)
+                                                player.play()
+                                            }
+                                            !isPlaying -> player.play()
+                                            isPlaying -> player.pause()
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -399,8 +541,8 @@ fun <T> InfiniteHorizontalCarousel(
     items: List<T>,
     itemWidth: Dp,
     itemSpacing: Dp,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 32.dp),
     itemContent: @Composable (T) -> Unit
 ) {
     if (items.isEmpty()) return
@@ -420,8 +562,8 @@ fun <T> InfiniteHorizontalCarousel(
     Box(modifier = modifier) {
         HorizontalPager(
             state = state,
-            pageSize = PageSize.Fixed(itemWidth),
-            contentPadding = PaddingValues(horizontal = 32.dp),
+            pageSize = PageSize.Fill,
+            contentPadding = contentPadding,
             pageSpacing = itemSpacing,
             modifier = Modifier.fillMaxWidth()
         ) { index ->
