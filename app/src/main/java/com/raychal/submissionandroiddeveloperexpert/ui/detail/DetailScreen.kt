@@ -220,7 +220,7 @@ fun GameDetailContent(
     LaunchedEffect(player, isPlaying, isSeeking) {
         while(isPlaying) {
             if(!isSeeking) {
-                currentPosition = player.currentPosition
+                currentPosition = player.currentPosition.coerceAtLeast(0)
             }
             delay(16L)
         }
@@ -233,6 +233,13 @@ fun GameDetailContent(
                 player.prepare()
                 player.play()
             }
+        }
+    }
+
+    LaunchedEffect(isPlayerUiVisible, isPlaying) {
+        if (isPlayerUiVisible && isPlaying) {
+            delay(3000)
+            isPlayerUiVisible = false
         }
     }
 
@@ -556,6 +563,7 @@ fun GameDetailContent(
                                 .clip(RoundedCornerShape(12.dp))
                         )
                     }
+                    Height(16)
                 }
             }
         }
