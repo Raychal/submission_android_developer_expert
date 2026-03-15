@@ -2,13 +2,24 @@ package com.raychal.core.ui.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.raychal.core.utils.network.NetworkObserver
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<S : UiState, I : UiIntent>(initialState: S) : ViewModel() {
+abstract class BaseViewModel<S : UiState, I : UiIntent>(
+    initialState: S,
+    networkObserver: NetworkObserver
+) : ViewModel() {
 
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<S> = _state.asStateFlow()
+
+    val networkStatus: StateFlow<NetworkObserver.Status> = networkObserver.observe()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = NetworkObserver.Status.Unavailable
+        )
 
     private val _intent = MutableSharedFlow<I>()
 

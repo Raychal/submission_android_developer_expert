@@ -79,6 +79,7 @@ import com.raychal.core.ui.components.Label
 import com.raychal.core.ui.components.LoadingCard
 import com.raychal.core.ui.components.StarRatingBar
 import com.raychal.core.ui.theme.background
+import com.raychal.core.utils.network.NetworkObserver
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -92,6 +93,7 @@ fun DetailScreen(
     navigationManager: NavigationManager = koinInject()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val networkStatus by viewModel.networkStatus.collectAsStateWithLifecycle()
 
     LaunchedEffect(gameId) {
         viewModel.sendIntent(DetailIntent.GetDetail(gameId))
@@ -139,7 +141,8 @@ fun DetailScreen(
             if (state.isLoading) {
                 LoadingCard(
                     heightForPicture = 250,
-                    repeat = 25
+                    repeat = 50,
+                    containerColor = Color.Transparent
                 )
             }
 
@@ -152,7 +155,7 @@ fun DetailScreen(
             }
 
             state.game?.let { game ->
-                GameDetailContent(game = game)
+                GameDetailContent(game = game, networkObserver = networkStatus)
             }
         }
     }
@@ -160,7 +163,10 @@ fun DetailScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GameDetailContent(game: Game) {
+fun GameDetailContent(
+    game: Game,
+    networkObserver: NetworkObserver.Status
+) {
 
     val context = LocalContext.current
     val player = retain {
@@ -219,11 +225,13 @@ fun GameDetailContent(game: Game) {
         }
     }
 
-    LaunchedEffect(game.movies) {
+    LaunchedEffect(game.movies, networkObserver) {
         if (game.movies.isNotEmpty()) {
             player.setMediaItem(MediaItem.fromUri(game.movies[currentVideoIndex].url))
-            player.prepare()
-            player.play()
+            if (networkObserver == NetworkObserver.Status.Available) {
+                player.prepare()
+                player.play()
+            }
         }
     }
 
@@ -473,62 +481,79 @@ fun GameDetailContent(game: Game) {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(text = stringResource(R.string.trailer), style = MaterialTheme.typography.labelLarge)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(250.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color.Black)
-                    ) {
-                        ContentFrame(
-                            player = player,
+                    if (networkObserver == NetworkObserver.Status.Available) {
+                        Box(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .clickable(
-                                    interactionSource = null,
-                                    indication = null
-                                ) {
-                                    isPlayerUiVisible = !isPlayerUiVisible
-                                },
-                            contentScale = ContentScale.FillBounds
-                        )
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
+                                .fillMaxWidth()
+                                .height(250.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color.Black)
                         ) {
-                            AnimatedVisibility(
-                                visible = isPlayerUiVisible,
-                                enter = fadeIn(),
-                                exit = fadeOut(),
-                                modifier = Modifier.fillMaxSize()
+                            ContentFrame(
+                                player = player,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable(
+                                        interactionSource = null,
+                                        indication = null
+                                    ) {
+                                        isPlayerUiVisible = !isPlayerUiVisible
+                                    },
+                                contentScale = ContentScale.FillBounds
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
                             ) {
-                                PlayerUi(
-                                    isPlaying = isPlaying,
-                                    isBuffering = isBuffering,
-                                    isSeeking = isSeeking,
-                                    currentPosition = currentPosition,
-                                    duration = duration,
-                                    onSeekBarPositionChange = {
-                                        isSeeking = true
-                                        currentPosition = it
-                                    },
-                                    onSeekBarPositionChangeFinished = {
-                                        player.seekTo(it)
-                                        isSeeking = false
-                                    },
-                                    onPlayPauseClick = {
-                                        when {
-                                            !isPlaying && player.playbackState == Player.STATE_ENDED -> {
-                                                player.seekTo(0)
-                                                player.play()
+                                AnimatedVisibility(
+                                    visible = isPlayerUiVisible,
+                                    enter = fadeIn(),
+                                    exit = fadeOut(),
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    PlayerUi(
+                                        isPlaying = isPlaying,
+                                        isBuffering = isBuffering,
+                                        isSeeking = isSeeking,
+                                        currentPosition = currentPosition,
+                                        duration = duration,
+                                        onSeekBarPositionChange = {
+                                            isSeeking = true
+                                            currentPosition = it
+                                        },
+                                        onSeekBarPositionChangeFinished = {
+                                            player.seekTo(it)
+                                            isSeeking = false
+                                        },
+                                        onPlayPauseClick = {
+                                            when {
+                                                !isPlaying && player.playbackState == Player.STATE_ENDED -> {
+                                                    player.seekTo(0)
+                                                    player.play()
+                                                }
+                                                !isPlaying -> player.play()
+                                                isPlaying -> player.pause()
                                             }
-                                            !isPlaying -> player.play()
-                                            isPlaying -> player.pause()
                                         }
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
+                    } else {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(game.movies[0].preview)
+                                .placeholder(R.drawable.placeholder)
+                                .error(R.drawable.placeholder)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .height(180.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                        )
                     }
                 }
             }

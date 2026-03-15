@@ -44,7 +44,7 @@ import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
 
 val favoriteModule = module {
-    factory { FavoriteViewModel(get()) }
+    factory { FavoriteViewModel(get(), get()) }
 }
 
 class FavoriteActivity : ComponentActivity() {

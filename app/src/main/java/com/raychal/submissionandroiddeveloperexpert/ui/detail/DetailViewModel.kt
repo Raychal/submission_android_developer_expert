@@ -4,12 +4,16 @@ import androidx.lifecycle.viewModelScope
 import com.raychal.core.data.Resource
 import com.raychal.core.domain.usecase.GameUseCase
 import com.raychal.core.ui.base.BaseViewModel
+import com.raychal.core.utils.network.NetworkObserver
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class DetailViewModel(private val gameUseCase: GameUseCase) :
-    BaseViewModel<DetailState, DetailIntent>(DetailState()) {
+class DetailViewModel(
+    private val gameUseCase: GameUseCase,
+    private val networkObserver: NetworkObserver
+) :
+    BaseViewModel<DetailState, DetailIntent>(DetailState(), networkObserver) {
 
     override fun handleIntent(intent: DetailIntent) {
         when (intent) {

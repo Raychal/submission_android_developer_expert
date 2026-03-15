@@ -20,6 +20,7 @@ import com.raychal.core.ui.theme.backgroundCard
 @Composable
 fun LoadingCard(
     modifier: Modifier = Modifier,
+    containerColor: Color = backgroundCard,
     heightForPicture: Int = 100,
     repeat: Int = 2
 ) {
@@ -28,7 +29,7 @@ fun LoadingCard(
             .fillMaxWidth()
             .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = backgroundCard,
+            containerColor = containerColor,
             contentColor = Color.White
         )
     ) {

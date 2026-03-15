@@ -9,6 +9,8 @@ import com.raychal.core.domain.repository.IGameRepository
 import com.raychal.core.domain.usecase.GameInteractor
 import com.raychal.core.domain.usecase.GameUseCase
 import com.raychal.core.navigation.NavigationManager
+import com.raychal.core.utils.network.ConnectivityObserver
+import com.raychal.core.utils.network.NetworkObserver
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -28,6 +30,7 @@ val databaseModule = module {
 }
 
 val networkModule = module {
+    single<NetworkObserver> { ConnectivityObserver(androidContext()) }
     single {
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
