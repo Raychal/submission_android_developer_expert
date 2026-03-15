@@ -462,7 +462,7 @@ fun GameDetailContent(
                         .padding(vertical = 12.dp)
                 ) { imageUrl ->
                     AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
+                        model = ImageRequest.Builder(context)
                             .data(imageUrl)
                             .placeholder(R.drawable.placeholder)
                             .error(R.drawable.placeholder)
@@ -542,7 +542,7 @@ fun GameDetailContent(
                         }
                     } else {
                         AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
+                            model = ImageRequest.Builder(context)
                                 .data(game.movies[0].preview)
                                 .placeholder(R.drawable.placeholder)
                                 .error(R.drawable.placeholder)
