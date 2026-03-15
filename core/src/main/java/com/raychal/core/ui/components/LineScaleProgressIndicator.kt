@@ -32,33 +32,6 @@ private val DefaultLineWidth = 3.dp
 private val DefaultLineSpacing = 4.dp
 private val DefaultLineCornerRadius = 3.dp
 
-/**
- * A composable function that displays a line scale style indeterminate progress indicator.
- *
- * The indicator consists of multiple vertical lines that scale up and down in a staggered,
- * wave-like animation pattern. Each line animates sequentially with a delay, creating a
- * continuous wave effect that cycles to indicate an ongoing operation.
- *
- * @param modifier The modifier to be applied to the progress indicator's container.
- * @param color The color of the animated lines. Defaults to [Primary75].
- * @param animationDuration The duration in milliseconds for one complete animation cycle of each line
- *                          (from minimum height to maximum height and back to minimum).
- *                          A longer duration results in a slower animation. Defaults to 600ms.
- * @param animationDelay The delay in milliseconds between the start of each line's animation.
- *                       This creates the staggered wave effect. Defaults to 400ms.
- * @param startDelay The initial delay in milliseconds before the first line starts animating.
- *                   Allows for a delayed start of the entire animation sequence. Defaults to 0ms.
- * @param lineCount The number of vertical lines in the indicator. Must be a positive integer.
- *                  Defaults to 5.
- * @param maxLineHeight The maximum height the lines will scale to during their animation cycle.
- *                      Defaults to 32.dp.
- * @param minLineHeight The minimum height the lines will scale to during their animation cycle.
- *                      Defaults to 16.dp.
- * @param lineWidth The fixed width of each vertical line. Defaults to 3.dp.
- * @param lineSpacing The horizontal space between adjacent lines. Defaults to 4.dp.
- * @param lineCornerRadius The corner radius applied to the ends of each line (creates rounded rectangles).
- *                        Defaults to 3.dp.
- */
 @Composable
 fun LineScaleProgressIndicator(
     modifier: Modifier = Modifier,
@@ -111,19 +84,6 @@ fun LineScaleProgressIndicator(
     }
 }
 
-/**
- * Draws the visual representation of the line scale progress indicator.
- *
- * This private function handles the low-level drawing operations to render
- * the animated lines with the specified properties.
- *
- * @param maxHeight The maximum possible height of a line in pixels (i.e., [maxLineHeight]).
- * @param height A list containing the current heights for each line based on their animation state.
- * @param width The fixed width of each line in pixels (i.e., [lineWidth]).
- * @param cornerRadius The corner radius in pixels applied to the ends of each line.
- * @param spacing The horizontal space between adjacent lines in pixels.
- * @param color The color to draw the lines.
- */
 private fun DrawScope.drawIndeterminateLineScaleIndicator(
     maxHeight: Float,
     height: List<Float>,
@@ -145,18 +105,6 @@ private fun DrawScope.drawIndeterminateLineScaleIndicator(
     }
 }
 
-/**
- * Internal composable function that provides a standardized canvas for drawing rectangular progress indicators.
- *
- * This function creates a rectangular canvas with common accessibility semantics and focusability
- * for progress indicator components. It abstracts away the common setup required
- * for drawing custom progress indicators using the Canvas API.
- *
- * @param modifier The modifier to be applied to the canvas.
- * @param width The width of the rectangular canvas.
- * @param height The height of the rectangular canvas.
- * @param onDraw The drawing operation to perform on the canvas using [DrawScope].
- */
 @Composable
 internal fun ProgressIndicator(
     modifier: Modifier,

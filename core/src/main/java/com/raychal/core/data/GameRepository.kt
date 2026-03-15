@@ -68,10 +68,8 @@ class GameRepository(
         val gameEntity = DataMapper.mapDomainToEntity(game.copy(isFavorite = state))
         withContext(Dispatchers.IO) {
             if (state) {
-                // Simpan semua data detail (denormalisasi)
                 gameDao.insertSingleGame(gameEntity)
             } else {
-                // Hapus dari database jika tidak lagi favorite
                 gameDao.deleteGame(gameEntity)
             }
         }

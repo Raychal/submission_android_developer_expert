@@ -1,6 +1,5 @@
 package com.raychal.core.data.source.remote.response
 
-import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
 
 data class GameResponse(

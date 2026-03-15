@@ -7,14 +7,11 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
@@ -22,18 +19,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-fun Modifier.onClickNoRipple(
-    enabled: Boolean = true,
-    onClick: () -> Unit
-) = composed {
-    val interactionSource = remember { MutableInteractionSource() }
-    this.clickable(
-        interactionSource = interactionSource,
-        indication = null,
-        enabled = enabled,
-        onClick = onClick
-    )
-}
 
 @Composable
 fun Height(value: Int) {

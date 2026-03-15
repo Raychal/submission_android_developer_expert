@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -75,9 +74,11 @@ import com.raychal.core.R
 import com.raychal.core.domain.model.Game
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.ui.components.EmptyOrErrorState
+import com.raychal.core.ui.components.Height
 import com.raychal.core.ui.components.Label
 import com.raychal.core.ui.components.LoadingCard
 import com.raychal.core.ui.components.StarRatingBar
+import com.raychal.core.ui.components.Width
 import com.raychal.core.ui.theme.background
 import com.raychal.core.utils.network.NetworkObserver
 import kotlinx.coroutines.delay
@@ -286,7 +287,7 @@ fun GameDetailContent(
                 .clip(RoundedCornerShape(16.dp)),
             contentScale = ContentScale.Crop
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Height(8)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -387,7 +388,7 @@ fun GameDetailContent(
                     Text(text = stringResource(R.string.rating), style = MaterialTheme.typography.labelLarge)
                     Row {
                         StarRatingBar(rating = game.rating.toFloat())
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Width(4)
                         Text(text = "(${game.rating})", style = MaterialTheme.typography.bodySmall)
                     }
                 }

@@ -35,6 +35,7 @@ import com.raychal.core.R
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
 import com.raychal.core.ui.components.GameItem
+import com.raychal.core.ui.components.LineScaleProgressIndicator
 import com.raychal.core.ui.components.LottieNotFoundAnimation
 import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
 import com.raychal.core.ui.theme.background
@@ -104,7 +105,7 @@ fun FavoriteScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            LineScaleProgressIndicator(modifier = Modifier.align(Alignment.Center), color = Color.White)
         }
 
         if (state.favorites.isEmpty() && !state.isLoading) {

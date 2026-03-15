@@ -90,7 +90,7 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
                 contentDescription = game.name,
                 modifier = Modifier.clip(shape)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Height(8)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -144,9 +144,9 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Height(8)
             Text(text = game.name, style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(4.dp))
+            Height(4)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
