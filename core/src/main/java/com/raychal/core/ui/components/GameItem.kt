@@ -152,7 +152,7 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = stringResource(R.string.rating_with_colon), style = MaterialTheme.typography.bodySmall)
+                Text(text = stringResource(R.string.review_with_colon), style = MaterialTheme.typography.bodySmall)
                 StarRatingBar(rating = game.rating.toFloat())
                 Text(text = "(${game.rating})", style = MaterialTheme.typography.bodySmall)
             }

@@ -369,7 +369,7 @@ fun GameDetailContent(
                 if (game.ratingTop in listOf(5,4)) {
                     Image(
                         painter = painterResource(id = ratingTopImage),
-                        contentDescription = stringResource(R.string.rating),
+                        contentDescription = stringResource(R.string.review),
                         modifier = Modifier.size(30.dp),
                         alignment = Alignment.Center,
                         contentScale = ContentScale.Crop
@@ -392,7 +392,7 @@ fun GameDetailContent(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(text = stringResource(R.string.rating), style = MaterialTheme.typography.labelLarge)
+                    Text(text = stringResource(R.string.review), style = MaterialTheme.typography.labelLarge)
                     Row {
                         StarRatingBar(rating = game.rating.toFloat())
                         Width(4)
