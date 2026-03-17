@@ -1,21 +1,22 @@
 package com.raychal.submissionandroiddeveloperexpert
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Row
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -28,7 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -43,7 +43,7 @@ import com.raychal.core.navigation.NavigationCommand
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
 import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
-import com.raychal.core.ui.theme.background
+import com.raychal.core.ui.theme.Background
 import com.raychal.submissionandroiddeveloperexpert.ui.detail.DetailScreen
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeIntent
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeScreen
@@ -55,10 +55,12 @@ class MainActivity : ComponentActivity() {
 
     private val navigationManager: NavigationManager by inject()
 
+    @RequiresApi(Build.VERSION_CODES.S)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(statusBarStyle = SystemBarStyle.light(android.graphics.Color.TRANSPARENT, android.graphics.Color.WHITE))
+
         setContent {
             SubmissionAndroidDeveloperExpertTheme {
                 val navController = rememberNavController()
@@ -94,46 +96,50 @@ class MainActivity : ComponentActivity() {
                         if (isHome) {
                             TopAppBar(
                                 title = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        OutlinedTextField(
-                                            value = searchQuery,
-                                            onValueChange = {
-                                                searchQuery = it
-                                                homeViewModel.sendIntent(HomeIntent.SearchGames(it))
-                                            },
-                                            placeholder = { Text(stringResource(R.string.search_text)) },
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .padding(end = 8.dp),
-                                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                                            singleLine = true,
-                                            shape = MaterialTheme.shapes.medium,
-                                            colors = OutlinedTextFieldDefaults.colors(
-                                                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                                focusedTextColor = Color.White,
-                                                unfocusedTextColor = Color.White,
-                                                focusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
-                                                unfocusedPlaceholderColor = Color.White.copy(alpha = 0.5f)
-                                            )
+                                    OutlinedTextField(
+                                        value = searchQuery,
+                                        onValueChange = {
+                                            searchQuery = it
+                                            homeViewModel.sendIntent(HomeIntent.SearchGames(it))
+                                        },
+                                        placeholder = { Text(stringResource(R.string.search_text)) },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(end = 16.dp),
+                                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                                        singleLine = true,
+                                        shape = MaterialTheme.shapes.medium,
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                                            focusedTextColor = Color.White,
+                                            unfocusedTextColor = Color.White,
+                                            focusedPlaceholderColor = Color.White.copy(alpha = 0.5f),
+                                            unfocusedPlaceholderColor = Color.White.copy(alpha = 0.5f)
                                         )
-                                        IconButton(onClick = {
-                                            navigationManager.navigate(Screen.Favorite)
-                                        }) {
-                                            Icon(Icons.Default.Favorite, contentDescription = stringResource(R.string.favorite), tint = MaterialTheme.colorScheme.primary)
-                                        }
-                                    }
+                                    )
                                 },
                                 colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = background
+                                    containerColor = Background
                                 )
                             )
                         }
                     },
-                    containerColor = background
+                    floatingActionButton = {
+                        if (isHome) {
+                            FloatingActionButton(
+                                onClick = { navigationManager.navigate(Screen.Favorite) },
+                                containerColor = Background,
+                                contentColor = Color.White
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FavoriteBorder,
+                                    contentDescription = stringResource(R.string.favorite)
+                                )
+                            }
+                        }
+                    },
+                    containerColor = Background
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,

@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.raychal.core.ui.theme.backgroundCard
+import com.raychal.core.ui.theme.BackgroundCard
 
 @Composable
 fun LoadingCard(
     modifier: Modifier = Modifier,
-    containerColor: Color = backgroundCard,
+    containerColor: Color = BackgroundCard,
     heightForPicture: Int = 100,
     repeat: Int = 2
 ) {

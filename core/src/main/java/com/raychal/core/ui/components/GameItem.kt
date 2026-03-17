@@ -1,5 +1,7 @@
 package com.raychal.core.ui.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,23 +23,32 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.raychal.core.R
 import com.raychal.core.domain.model.Game
-import com.raychal.core.ui.theme.backgroundCard
+import com.raychal.core.ui.theme.StarGold
+import com.raychal.core.ui.theme.BackgroundCard
+import com.raychal.core.ui.theme.BackgroundDark
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GameItem(game: Game, modifier: Modifier = Modifier) {
 
@@ -73,31 +85,43 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(8.dp),
+        shape = shape,
         colors = CardDefaults.cardColors(
-            containerColor = backgroundCard,
+            containerColor = BackgroundCard,
             contentColor = Color.White
         )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(game.backgroundImage)
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = game.name,
-                modifier = Modifier.clip(shape)
-            )
-            Height(8)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        Column {
+            Box(modifier = Modifier.height(200.dp)) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(game.backgroundImage)
+                        .placeholder(R.drawable.placeholder)
+                        .error(R.drawable.placeholder)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, BackgroundDark),
+                                startY = 300f
+                            )
+                        )
+                )
+
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     val maxVisible = 3
                     val displayPlatforms = platforms.distinctBy { it.second }.take(maxVisible)
@@ -119,47 +143,74 @@ fun GameItem(game: Game, modifier: Modifier = Modifier) {
                         )
                     }
                 }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp),
+                    color = Color.Black.copy(alpha = 0.6f),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .background(Color.Transparent, shape)
-                            .border(1.dp, colorBorderMetaScore,shape)
-                            .padding(4.dp),
-                        contentAlignment = Alignment.Center
+                    Row(
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = game.metaScore.toString(),
-                            style = MaterialTheme.typography.bodySmall.merge(color = colorFontMetaScore)
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = stringResource(R.string.rate),
+                            tint = StarGold,
+                            modifier = Modifier.size(14.dp)
                         )
-                    }
-                    if (game.tba) {
+                        Width(4)
                         Text(
-                            text = stringResource(R.string.tba).uppercase(),
-                            style = MaterialTheme.typography.titleMedium
+                            text = game.rating.toString(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
             }
-            Height(8)
-            Text(text = game.name, style = MaterialTheme.typography.titleMedium)
-            Height(4)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                verticalAlignment = Alignment.CenterVertically
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .fillMaxWidth()
             ) {
-                Text(text = stringResource(R.string.review_with_colon), style = MaterialTheme.typography.bodySmall)
-                StarRatingBar(rating = game.rating.toFloat())
-                Text(text = "(${game.rating})", style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = game.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Height(16)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = formatGameDate(game.released),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .border(1.5.dp, colorBorderMetaScore, RoundedCornerShape(4.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(
+                            text = game.metaScore.toString(),
+                            color = colorFontMetaScore,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
             }
-            Text(
-                text = stringResource(R.string.released_with_colon, game.released ?: "N/A"),
-                style = MaterialTheme.typography.bodySmall
-            )
         }
     }
 }
@@ -192,5 +243,18 @@ fun StarRatingBar(
                 Spacer(modifier = Modifier.width(starSpacing))
             }
         }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+private fun formatGameDate(dateString: String?): String {
+    if (dateString.isNullOrEmpty()) return "N/A"
+    return try {
+        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val outputFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
+        val date = LocalDate.parse(dateString, inputFormatter)
+        date.format(outputFormatter)
+    } catch (_: Exception) {
+        dateString
     }
 }

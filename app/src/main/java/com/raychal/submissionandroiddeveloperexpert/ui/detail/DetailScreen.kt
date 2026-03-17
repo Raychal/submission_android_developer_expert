@@ -79,7 +79,7 @@ import com.raychal.core.ui.components.Label
 import com.raychal.core.ui.components.LoadingCard
 import com.raychal.core.ui.components.StarRatingBar
 import com.raychal.core.ui.components.Width
-import com.raychal.core.ui.theme.background
+import com.raychal.core.ui.theme.Background
 import com.raychal.core.utils.network.NetworkObserver
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
@@ -124,14 +124,14 @@ fun DetailScreen(
                 },
                 windowInsets = WindowInsets(0,0,0,0),
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = background,
+                    containerColor = Background,
                     navigationIconContentColor = Color.White,
                     actionIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )
             )
         },
-        containerColor = background,
+        containerColor = Background,
         contentColor = Color.White
     ) { innerPadding ->
         Box(

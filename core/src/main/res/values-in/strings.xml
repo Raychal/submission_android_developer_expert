@@ -11,6 +11,7 @@
     <string name="no_favorite_game_yet">Belum ada gim yang disukai</string>
     <string name="review_with_colon">Ulasan:</string>
     <string name="released_with_colon">Dirilis: %1$s</string>
+    <string name="rate">Nilai</string>
     <string name="review">Ulasan</string>
     <string name="released">Dirilis</string>
     <string name="genre">Genre</string>

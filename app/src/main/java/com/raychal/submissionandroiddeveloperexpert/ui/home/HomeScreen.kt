@@ -1,27 +1,38 @@
 package com.raychal.submissionandroiddeveloperexpert.ui.home
 
+import android.os.Build
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.raychal.core.R
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
@@ -29,10 +40,14 @@ import com.raychal.core.ui.components.GameItem
 import com.raychal.core.ui.components.LineScaleProgressIndicator
 import com.raychal.core.ui.components.LoadingCard
 import com.raychal.core.ui.components.LottieNotFoundAnimation
+import com.raychal.core.ui.components.Width
+import com.raychal.core.ui.theme.Background
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.io.IOException
+import kotlin.math.roundToInt
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -42,6 +57,9 @@ fun HomeScreen(
     val context = LocalContext.current
     val games = viewModel.gamesPagingData.collectAsLazyPagingItems()
     val isRefreshing = games.loadState.refresh is LoadState.Loading && games.itemCount > 0
+
+    val lazyListState = rememberLazyListState()
+    val pullToRefreshState = rememberPullToRefreshState()
 
     val youAreOfflineText = stringResource(R.string.you_are_offline)
     val serverErrorText = stringResource(R.string.server_error)
@@ -60,77 +78,121 @@ fun HomeScreen(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { games.refresh() },
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        indicator = {},
+        state = pullToRefreshState
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
-                verticalItemSpacing = 4.dp,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp)
-            ) {
-                items(
-                    count = games.itemCount,
-                    key = games.itemKey { it.id }
-                ) { index ->
-                    games[index]?.let { game ->
-                        GameItem(
-                            game = game,
-                            modifier = Modifier.clickable {
-                                navigationManager.navigate(Screen.Detail(game.id))
-                            }
-                        )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            item {
+                PullToRefreshIndicator(pullToRefreshState.distanceFraction, isRefreshing)
+            }
+            items(
+                count = games.itemCount,
+                key = { index -> games[index]?.id ?: index }
+            ) { index ->
+                val game = games[index] ?: return@items
+                GameItem(
+                    game = game,
+                    modifier = Modifier.clickable {
+                        navigationManager.navigate(Screen.Detail(game.id))
                     }
-                }
-
-                when (games.loadState.append) {
-                    is LoadState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                LineScaleProgressIndicator()
-                            }
-                        }
-                    }
-                    else -> {}
-                }
+                )
             }
 
-            when (val state = games.loadState.refresh) {
+            when (games.loadState.append) {
                 is LoadState.Loading -> {
-                    if (isInitialLoad) {
-                        LazyVerticalStaggeredGrid(
-                            columns = StaggeredGridCells.Fixed(2),
-                            verticalItemSpacing = 4.dp,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxSize(),
-                            contentPadding = PaddingValues(16.dp)
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            items(10) {
-                                LoadingCard()
-                            }
+                            LineScaleProgressIndicator()
                         }
                     }
                 }
-                is LoadState.Error -> {
-                    if (games.itemCount == 0) {
-                        LottieNotFoundAnimation(
-                            lottieFile = R.raw.no_connection,
-                            message = if (state.error is IOException) youAreOfflineText else serverErrorText
-                        )
+                else -> {}
+            }
+        }
+
+        when (val state = games.loadState.refresh) {
+            is LoadState.Loading -> {
+                if (isInitialLoad) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(4) {
+                            LoadingCard(
+                                heightForPicture = 200
+                            )
+                        }
                     }
                 }
-                is LoadState.NotLoading -> {
-                    if (games.itemCount == 0) {
-                        LottieNotFoundAnimation()
-                    }
+            }
+            is LoadState.Error -> {
+                if (games.itemCount == 0) {
+                    LottieNotFoundAnimation(
+                        lottieFile = R.raw.no_connection,
+                        message = if (state.error is IOException) youAreOfflineText else serverErrorText
+                    )
+                }
+            }
+            is LoadState.NotLoading -> {
+                if (games.itemCount == 0) {
+                    LottieNotFoundAnimation()
                 }
             }
         }
+    }
+}
+
+@Composable
+fun PullToRefreshIndicator(progress: Float, isRefreshing: Boolean) {
+    val rowHeight = if (isRefreshing) { 60.dp } else {
+        (progress * 50).roundToInt().dp
+    }
+    Row(
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(rowHeight)
+            .background(Background)
+            .padding(top = 8.dp)
+    ) {
+        if (progress >= 1 || isRefreshing) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                LineScaleProgressIndicator()
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowDownward,
+                    contentDescription = "",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Width(8)
+                Text(
+                    "Pull to Refresh",
+                    color = Color.White,
+                )
+            }
+        }
+
     }
 }

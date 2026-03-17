@@ -37,7 +37,7 @@ import com.raychal.core.ui.components.GameItem
 import com.raychal.core.ui.components.LineScaleProgressIndicator
 import com.raychal.core.ui.components.LottieNotFoundAnimation
 import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
-import com.raychal.core.ui.theme.background
+import com.raychal.core.ui.theme.Background
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.context.loadKoinModules
@@ -69,13 +69,13 @@ class FavoriteActivity : ComponentActivity() {
                                 }
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = background,
+                                containerColor = Background,
                                 titleContentColor = Color.White,
                                 navigationIconContentColor = Color.White
                             )
                         )
                     },
-                    containerColor = background
+                    containerColor = Background
                 ) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
                         FavoriteScreen(

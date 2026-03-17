@@ -11,6 +11,7 @@
     <string name="no_favorite_game_yet">No favorite games yet</string>
     <string name="review_with_colon">Review:</string>
     <string name="released_with_colon">Released: %1$s</string>
+    <string name="rate">Rate</string>
     <string name="review">Review</string>
     <string name="released">Released</string>
     <string name="genre">Genre</string>
