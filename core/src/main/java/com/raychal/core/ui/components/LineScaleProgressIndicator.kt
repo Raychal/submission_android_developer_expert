@@ -35,7 +35,7 @@ private val DefaultLineCornerRadius = 3.dp
 @Composable
 fun LineScaleProgressIndicator(
     modifier: Modifier = Modifier,
-    color: Color = Color.Gray,
+    color: Color = Color.White,
     animationDuration: Int = DefaultAnimationDuration,
     animationDelay: Int = DefaultAnimationDelay,
     startDelay: Int = DefaultStartDelay,

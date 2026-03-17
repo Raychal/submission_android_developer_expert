@@ -35,8 +35,8 @@ class GameRepository(
         emit(Resource.Loading())
         try {
             val response = apiService.getDetailGame(id)
-            val screenshotsResponse = try { apiService.getDetailGameScreenshots(id) } catch (e: Exception) { null }
-            val moviesResponse = try { apiService.getDetailGameMovies(id) } catch (e: Exception) { null }
+            val screenshotsResponse = try { apiService.getDetailGameScreenshots(id) } catch (_: Exception) { null }
+            val moviesResponse = try { apiService.getDetailGameMovies(id) } catch (_: Exception) { null }
 
             val domainData = DataMapper.mapResponseToDomain(response, screenshotsResponse, moviesResponse)
 

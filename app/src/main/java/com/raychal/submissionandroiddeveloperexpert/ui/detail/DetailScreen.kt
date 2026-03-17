@@ -522,7 +522,6 @@ fun GameDetailContent(
                                     PlayerUi(
                                         isPlaying = isPlaying,
                                         isBuffering = isBuffering,
-                                        isSeeking = isSeeking,
                                         currentPosition = currentPosition,
                                         duration = duration,
                                         onSeekBarPositionChange = {

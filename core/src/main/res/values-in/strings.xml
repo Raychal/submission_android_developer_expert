@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">STG</string>
     <string name="not_found">Tidak Ditemukan</string>
     <string name="server_error">Server Error</string>
     <string name="you_are_offline">Kamu Sedang Offline</string>
@@ -7,7 +8,6 @@
     <string name="detail">Detail</string>
     <string name="search_text">Cari Game…</string>
     <string name="favorite">Disukai</string>
-    <string name="not_favorite">Tidak disukai</string>
     <string name="no_favorite_game_yet">Belum ada gim yang disukai</string>
     <string name="review_with_colon">Ulasan:</string>
     <string name="released_with_colon">Dirilis: %1$s</string>
@@ -22,5 +22,4 @@
     <string name="play">Mulai</string>
     <string name="last_modified">Terakhir Diubah</string>
     <string name="tba">tba</string>
-    <string name="no_data_available">Tidak Ada Data yang Tersedia</string>
 </resources>

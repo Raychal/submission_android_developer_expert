@@ -40,7 +40,6 @@ fun PlayerUi(
     currentPosition: Long,
     duration: Long,
     isBuffering: Boolean,
-    isSeeking: Boolean,
     onSeekBarPositionChange: (Long) -> Unit,
     onSeekBarPositionChangeFinished: (Long) -> Unit,
     onPlayPauseClick: () -> Unit,
@@ -60,9 +59,7 @@ fun PlayerUi(
         contentAlignment = Alignment.Center
     ) {
         if(isBuffering) {
-            LineScaleProgressIndicator(
-                color = Color.White
-            )
+            LineScaleProgressIndicator()
         } else {
             IconButton(
                 onClick = onPlayPauseClick,

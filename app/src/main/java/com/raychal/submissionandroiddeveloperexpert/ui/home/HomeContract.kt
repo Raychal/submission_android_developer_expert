@@ -14,5 +14,5 @@ data class HomeState(
 
 sealed class HomeIntent : UiIntent {
     data class SearchGames(val query: String) : HomeIntent()
-    data class Refresh(val query: String) : HomeIntent()
+    class Refresh : HomeIntent()
 }

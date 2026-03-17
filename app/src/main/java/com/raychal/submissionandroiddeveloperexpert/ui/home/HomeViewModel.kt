@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.*
 
 class HomeViewModel(
     private val gameUseCase: GameUseCase,
-    private val networkObserver: NetworkObserver
+    networkObserver: NetworkObserver
 ) :
     BaseViewModel<HomeState, HomeIntent>(HomeState(), networkObserver) {
 

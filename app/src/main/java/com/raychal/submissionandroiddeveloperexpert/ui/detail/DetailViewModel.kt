@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel(
     private val gameUseCase: GameUseCase,
-    private val networkObserver: NetworkObserver
+    networkObserver: NetworkObserver
 ) :
     BaseViewModel<DetailState, DetailIntent>(DetailState(), networkObserver) {
 

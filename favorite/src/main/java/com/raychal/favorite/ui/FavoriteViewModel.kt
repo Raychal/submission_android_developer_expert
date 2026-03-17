@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.onEach
 
 class FavoriteViewModel(
     private val gameUseCase: GameUseCase,
-    private val networkObserver: NetworkObserver
+    networkObserver: NetworkObserver
 ) :
     BaseViewModel<FavoriteState, FavoriteIntent>(FavoriteState(), networkObserver) {
 

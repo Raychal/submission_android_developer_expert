@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution">
 
-    <dist:module dist:title="@string/title_favorite">
+    <dist:module dist:title="@string/favorite">
         <dist:delivery>
             <dist:install-time />
         </dist:delivery>

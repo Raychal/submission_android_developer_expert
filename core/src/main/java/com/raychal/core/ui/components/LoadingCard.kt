@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.raychal.core.ui.theme.backgroundCard
 
@@ -58,10 +57,4 @@ fun LoadingCard(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun LoadingCardPreview() {
-    LoadingCard()
 }
