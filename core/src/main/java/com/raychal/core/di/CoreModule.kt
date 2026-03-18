@@ -11,6 +11,8 @@ import com.raychal.core.domain.usecase.GameUseCase
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.utils.network.ConnectivityObserver
 import com.raychal.core.utils.network.NetworkObserver
+import net.sqlcipher.database.SQLiteDatabase
+import net.sqlcipher.database.SupportFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -22,10 +24,14 @@ import java.util.concurrent.TimeUnit
 val databaseModule = module {
     factory { get<GameDatabase>().gameDao() }
     single {
+        val passphrase: ByteArray = SQLiteDatabase.getBytes("rawg".toCharArray())
+        val factory = SupportFactory(passphrase)
         Room.databaseBuilder(
                 androidContext(),
                 GameDatabase::class.java, "Game.db"
-            ).fallbackToDestructiveMigration(false).build()
+            ).fallbackToDestructiveMigration(false)
+            .openHelperFactory(factory)
+            .build()
     }
 }
 
