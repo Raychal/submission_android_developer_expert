@@ -20,7 +20,7 @@ jobs:
           command: sudo chmod +x ./gradlew
       - run:
           name: Download Dependencies
-          command: ./gradlew dependencies
+          command: ./gradlew androidDependencies
       - android/save-gradle-cache
       - run:
           name: Run Build

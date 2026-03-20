@@ -71,6 +71,7 @@ import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
 import coil.compose.AsyncImage
@@ -533,6 +534,7 @@ fun GameDetailContent(
                                 .background(Color.Black)
                                 .testTag("DetailVideoPlayer")
                         ) {
+                            @OptIn(UnstableApi::class)
                             ContentFrame(
                                 player = player,
                                 modifier = Modifier
