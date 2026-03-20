@@ -8,6 +8,11 @@ jobs:
     executor: android/android
     steps:
       - checkout
+      - run:
+            name: Create local.properties
+            command: |
+              echo "BASE_URL=${BASE_URL}" >> local.properties
+              echo "API_KEY=${API_KEY}" >> local.properties
       - restore_cache:
           key: android-orb-v1-
       - run:
