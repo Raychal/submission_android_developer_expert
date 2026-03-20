@@ -31,7 +31,8 @@
 -keep,includedescriptorclasses class net.sqlcipher.** { *; }
 -keep,includedescriptorclasses interface net.sqlcipher.** { *; }
 -dontwarn net.sqlcipher.**
--keep class net.zetetic.database.** { *; }
+-keep,includedescriptorclasses class net.zetetic.database.** { *; }
+-keep,includedescriptorclasses interface net.zetetic.database.** { *; }
 
 -keepattributes Signature, *Annotation*
 -dontwarn sun.misc.**
