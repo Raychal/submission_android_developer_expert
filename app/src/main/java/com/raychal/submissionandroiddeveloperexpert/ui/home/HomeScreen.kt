@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -78,18 +79,21 @@ fun HomeScreen(
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { games.refresh() },
-        modifier = Modifier.fillMaxSize(),
-        indicator = {},
+        modifier = Modifier.fillMaxSize().testTag("PullToRefreshBox"),
+        indicator = {
+            PullToRefreshIndicator(
+                progress = pullToRefreshState.distanceFraction,
+                isRefreshing = isRefreshing,
+                modifier = Modifier.testTag("PullToRefreshIndicator")
+            )
+        },
         state = pullToRefreshState
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().testTag("GameList"),
             state = lazyListState,
             contentPadding = PaddingValues(16.dp)
         ) {
-            item {
-                PullToRefreshIndicator(pullToRefreshState.distanceFraction, isRefreshing)
-            }
             items(
                 count = games.itemCount,
                 key = { index -> games[index]?.id ?: index }
@@ -97,9 +101,11 @@ fun HomeScreen(
                 val game = games[index] ?: return@items
                 GameItem(
                     game = game,
-                    modifier = Modifier.clickable {
-                        navigationManager.navigate(Screen.Detail(game.id))
-                    }
+                    modifier = Modifier
+                        .testTag("GameItem")
+                        .clickable {
+                            navigationManager.navigate(Screen.Detail(game.id))
+                        }
                 )
             }
 
@@ -124,7 +130,7 @@ fun HomeScreen(
             is LoadState.Loading -> {
                 if (isInitialLoad) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().testTag("LoadingList"),
                         contentPadding = PaddingValues(16.dp)
                     ) {
                         items(4) {
@@ -139,13 +145,14 @@ fun HomeScreen(
                 if (games.itemCount == 0) {
                     LottieNotFoundAnimation(
                         lottieFile = R.raw.no_connection,
-                        message = if (state.error is IOException) youAreOfflineText else serverErrorText
+                        message = if (state.error is IOException) youAreOfflineText else serverErrorText,
+                        modifier = Modifier.testTag("ErrorAnimation")
                     )
                 }
             }
             is LoadState.NotLoading -> {
                 if (games.itemCount == 0) {
-                    LottieNotFoundAnimation()
+                    LottieNotFoundAnimation(modifier = Modifier.testTag("EmptyAnimation"))
                 }
             }
         }
@@ -153,14 +160,14 @@ fun HomeScreen(
 }
 
 @Composable
-fun PullToRefreshIndicator(progress: Float, isRefreshing: Boolean) {
+fun PullToRefreshIndicator(progress: Float, isRefreshing: Boolean, modifier: Modifier = Modifier) {
     val rowHeight = if (isRefreshing) { 60.dp } else {
         (progress * 50).roundToInt().dp
     }
     Row(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(rowHeight)
             .background(Background)

@@ -18,9 +18,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Label(
     text: String,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(Color.Transparent, RoundedCornerShape(16.dp))
             .border(1.dp, Color.White, RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center

@@ -1,5 +1,6 @@
 package com.raychal.favorite.ui
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -30,8 +31,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.android.play.core.splitcompat.SplitCompat
 import com.raychal.core.R
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
@@ -46,6 +49,12 @@ import org.koin.core.context.loadKoinModules
 
 
 class FavoriteActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(newBase)
+        SplitCompat.installActivity(this)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,7 +126,7 @@ fun FavoriteScreen(
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().testTag("FavoriteList"),
             contentPadding = PaddingValues(16.dp)
         ) {
             items(state.favorites, key = { it.id }) { game ->

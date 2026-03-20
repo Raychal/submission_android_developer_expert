@@ -4,6 +4,7 @@ coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+kotlinxCoroutinesTest = "1.10.2"
 leakcanaryAndroid = "2.14"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
@@ -24,6 +25,10 @@ paging = "3.4.2"
 coil = "2.7.0"
 androidDatabaseSqlcipher = "4.14.0"
 sqliteKtx = "2.6.2"
+mockito = "5.23.0"
+mockito-kotlin = "6.3.0"
+uiautomator = "2.3.0"
+playFeatureDelivery = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +47,7 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -74,6 +80,12 @@ androidx-media3-ui-common = { group = "androidx.media3", name = "media3-common-k
 
 android-sqlcipher-android = { module = "net.zetetic:sqlcipher-android", version.ref = "androidDatabaseSqlcipher" }
 androidx-sqlite-ktx = { module = "androidx.sqlite:sqlite-ktx", version.ref = "sqliteKtx" }
+
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+play-feature-delivery = { group = "com.google.android.play", name = "feature-delivery", version.ref = "playFeatureDelivery" }
+play-feature-delivery-ktx = { group = "com.google.android.play", name = "feature-delivery-ktx", version.ref = "playFeatureDelivery" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
