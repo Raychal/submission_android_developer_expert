@@ -19,11 +19,8 @@ jobs:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
       - run:
-          name: Navigate to android folder
-          command: cd android
-      - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies
+          command: ./gradlew dependencies
       - save_cache:
           key: 'android-orb-v1-{{ epoch }}'
           paths:
