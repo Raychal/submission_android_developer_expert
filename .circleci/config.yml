@@ -1,11 +1,12 @@
 version: 2.1
 
 orbs:
-  android: circleci/android@0.2.1
+  android: circleci/android@2.5.0
 
 jobs:
   build:
-    executor: android/android
+    docker:
+      - image: cimg/android:2024.03
     steps:
       - checkout
       - run:
@@ -13,19 +14,14 @@ jobs:
             command: |
               echo "BASE_URL=${BASE_URL}" >> local.properties
               echo "API_KEY=${API_KEY}" >> local.properties
-      - restore_cache:
-          key: android-orb-v1-
+      - android:restore-gradle-cache
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
       - run:
           name: Download Dependencies
           command: ./gradlew dependencies
-      - save_cache:
-          key: 'android-orb-v1-{{ epoch }}'
-          paths:
-            - ~/.android/build-cache
-            - ~/.android/cache
+      - android:save-gradle-cache
       - run:
           name: Run Build
           command: ./gradlew build
