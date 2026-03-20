@@ -76,7 +76,15 @@ class MainActivity : ComponentActivity() {
                         when (command) {
                             is NavigationCommand.Navigate -> {
                                 if (command.route is Screen.Favorite) {
-                                    startActivity(Intent(this@MainActivity, Class.forName("com.raychal.favorite.ui.FavoriteActivity")))
+                                    try {
+                                        val intent = Intent(
+                                            this@MainActivity,
+                                            Class.forName("com.raychal.favorite.ui.FavoriteActivity")
+                                        )
+                                        startActivity(intent)
+                                    } catch (e: ClassNotFoundException) {
+                                        e.printStackTrace()
+                                    }
                                 } else {
                                     navController.navigate(command.route) {
                                         command.navOptions(this)

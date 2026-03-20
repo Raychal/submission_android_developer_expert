@@ -2,7 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution">
 
-    <dist:module dist:title="@string/favorite">
+    <dist:module
+        dist:instant="false"
+        dist:title="@string/favorite">
         <dist:delivery>
             <dist:install-time />
         </dist:delivery>
@@ -12,7 +14,7 @@
     <application>
         <activity
             android:name=".ui.FavoriteActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="Favorite Games"
             android:theme="@style/Theme.SubmissionAndroidDeveloperExpert" />
     </application>

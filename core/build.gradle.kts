@@ -84,6 +84,8 @@ dependencies {
     api(libs.android.database.sqlcipher)
     api(libs.androidx.sqlite.ktx)
 
+//    api(libs.play.core)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,10 +1,12 @@
 package com.raychal.favorite.ui
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -48,6 +50,7 @@ val favoriteModule = module {
 }
 
 class FavoriteActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +80,9 @@ class FavoriteActivity : ComponentActivity() {
                     },
                     containerColor = Background
                 ) { innerPadding ->
-                    Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+                    Box(modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()) {
                         FavoriteScreen(
                             onItemClick = { gameId ->
                                 navigationManager.navigate(Screen.Detail(gameId))
@@ -91,6 +96,7 @@ class FavoriteActivity : ComponentActivity() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FavoriteScreen(
     viewModel: FavoriteViewModel = koinViewModel(),
