@@ -13,6 +13,7 @@ import com.raychal.core.utils.network.ConnectivityObserver
 import com.raychal.core.utils.network.NetworkObserver
 import net.sqlcipher.database.SQLiteDatabase
 import net.sqlcipher.database.SupportFactory
+import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -38,6 +39,10 @@ val databaseModule = module {
 val networkModule = module {
     single<NetworkObserver> { ConnectivityObserver(androidContext()) }
     single {
+        val hostname = "api.rawg.io"
+        val certificatePinner = CertificatePinner.Builder()
+            .add(hostname, "sha256/zq2pI6/bdpjVKNaU4/fUK1Fjb8iQAnfA9FnajywDIPU=")
+            .build()
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .addInterceptor { chain ->
@@ -49,6 +54,7 @@ val networkModule = module {
             }
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
+            .certificatePinner(certificatePinner)
             .build()
     }
     single {
