@@ -41,6 +41,7 @@ val networkModule = module {
     single {
         val hostname = "api.rawg.io"
         val certificatePinner = CertificatePinner.Builder()
+            .add(hostname, "sha256/u0kMmeYa6NvMylpAc53ku56NwPq6qkzDuGmBERA/iUE=")
             .add(hostname, "sha256/zq2pI6/bdpjVKNaU4/fUK1Fjb8iQAnfA9FnajywDIPU=")
             .build()
         OkHttpClient.Builder()
