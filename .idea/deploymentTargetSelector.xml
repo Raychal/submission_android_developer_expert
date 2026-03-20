@@ -11,9 +11,6 @@
       <SelectionState runConfigName="testScrollHomeScreen()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="testNavigateToDetailAndBack()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="NavigationTest (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
