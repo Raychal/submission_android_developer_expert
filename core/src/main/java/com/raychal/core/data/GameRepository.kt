@@ -31,7 +31,7 @@ class GameRepository(
         ).flow
     }
 
-    override fun getDetailGame(id: Int): Flow<Resource<Game>> = flow {
+    override fun getDetailGame(id: Int): Flow<Resource<Game>> = flow<Resource<Game>> {
         emit(Resource.Loading())
         try {
             val response = apiService.getDetailGame(id)
@@ -56,7 +56,7 @@ class GameRepository(
                 emit(Resource.Error(e.message ?: "Unknown Error"))
             }
         }
-    }.flowOn(Dispatchers.IO) as Flow<Resource<Game>>
+    }.flowOn(Dispatchers.IO)
 
     override fun getFavoriteGame(): Flow<List<Game>> {
         return gameDao.getFavoriteGame().map {
