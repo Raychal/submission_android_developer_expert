@@ -38,16 +38,12 @@ import com.raychal.core.navigation.Screen
 import com.raychal.core.ui.components.GameItem
 import com.raychal.core.ui.components.LineScaleProgressIndicator
 import com.raychal.core.ui.components.LottieNotFoundAnimation
-import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
 import com.raychal.core.ui.theme.Background
+import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.context.loadKoinModules
-import org.koin.dsl.module
 
-val favoriteModule = module {
-    factory { FavoriteViewModel(get(), get()) }
-}
 
 class FavoriteActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)

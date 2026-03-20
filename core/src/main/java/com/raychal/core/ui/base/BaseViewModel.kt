@@ -38,6 +38,6 @@ abstract class BaseViewModel<S : UiState, I : UiIntent>(
     protected abstract fun handleIntent(intent: I)
 
     protected fun setState(reducer: S.() -> S) {
-        _state.update { it.reducer() }
+        _state.update { reducer(it) }
     }
 }

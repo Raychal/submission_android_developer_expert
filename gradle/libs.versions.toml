@@ -22,7 +22,7 @@ kotlinxSerialization = "1.10.0"
 ksp = "2.3.6"
 paging = "3.4.2"
 coil = "2.7.0"
-androidDatabaseSqlcipher = "4.5.4"
+androidDatabaseSqlcipher = "4.14.0"
 sqliteKtx = "2.6.2"
 
 [libraries]
@@ -72,10 +72,8 @@ androidx-media3-ui-compose = { group = "androidx.media3", name = "media3-ui-comp
 androidx-media3-ui-compose-material3 = { group = "androidx.media3", name = "media3-ui-compose-material3", version.ref = "media3" }
 androidx-media3-ui-common = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3" }
 
-android-database-sqlcipher = { module = "net.zetetic:android-database-sqlcipher", version.ref = "androidDatabaseSqlcipher" }
+android-sqlcipher-android = { module = "net.zetetic:sqlcipher-android", version.ref = "androidDatabaseSqlcipher" }
 androidx-sqlite-ktx = { module = "androidx.sqlite:sqlite-ktx", version.ref = "sqliteKtx" }
-
-play-core = { group = "com.google.android.play", name = "feature-delivery", version = "2.1.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

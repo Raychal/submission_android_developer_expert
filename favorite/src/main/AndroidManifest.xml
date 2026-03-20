@@ -13,9 +13,17 @@
 
     <application>
         <activity
-            android:name=".ui.FavoriteActivity"
+            android:name="com.raychal.favorite.ui.FavoriteActivity"
             android:exported="true"
             android:label="Favorite Games"
-            android:theme="@style/Theme.SubmissionAndroidDeveloperExpert" />
+            android:theme="@style/Theme.SubmissionAndroidDeveloperExpert">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="submissionandroiddeveloperexpert"
+                    android:host="favorites"/>
+            </intent-filter>
+        </activity>
     </application>
 </manifest>

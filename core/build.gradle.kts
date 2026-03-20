@@ -81,10 +81,8 @@ dependencies {
     api(libs.androidx.compose.material3)
     api(libs.androidx.compose.material.icons.extended)
 
-    api(libs.android.database.sqlcipher)
+    api(libs.android.sqlcipher.android)
     api(libs.androidx.sqlite.ktx)
-
-//    api(libs.play.core)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

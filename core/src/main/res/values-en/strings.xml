@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">STG</string>
+    <string name="not_found">Not Found</string>
+    <string name="server_error">Server Error</string>
+    <string name="you_are_offline">You Are Offline</string>
+    <string name="back">Back</string>
+    <string name="detail">Detail</string>
+    <string name="search_text">Search Games…</string>
+    <string name="favorite">Favorite</string>
+    <string name="no_favorite_game_yet">No favorite games yet</string>
+    <string name="rate">Rate</string>
+    <string name="review">Review</string>
+    <string name="released">Released</string>
+    <string name="genre">Genre</string>
+    <string name="age_rating">Age Rating</string>
+    <string name="tags">Tags</string>
+    <string name="screenshots">Screenshots</string>
+    <string name="trailer">Trailer</string>
+    <string name="pause">Pause</string>
+    <string name="play">Play</string>
+    <string name="last_modified">Last Modified</string>
+    <string name="tba">tba</string>
+</resources>

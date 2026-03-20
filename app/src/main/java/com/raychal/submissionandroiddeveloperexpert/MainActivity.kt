@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -42,8 +43,8 @@ import com.raychal.core.R
 import com.raychal.core.navigation.NavigationCommand
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
-import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
 import com.raychal.core.ui.theme.Background
+import com.raychal.core.ui.theme.SubmissionAndroidDeveloperExpertTheme
 import com.raychal.submissionandroiddeveloperexpert.ui.detail.DetailScreen
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeIntent
 import com.raychal.submissionandroiddeveloperexpert.ui.home.HomeScreen
@@ -77,18 +78,14 @@ class MainActivity : ComponentActivity() {
                             is NavigationCommand.Navigate -> {
                                 if (command.route is Screen.Favorite) {
                                     try {
-                                        val intent = Intent(
-                                            this@MainActivity,
-                                            Class.forName("com.raychal.favorite.ui.FavoriteActivity")
-                                        )
-                                        startActivity(intent)
+                                        val uri =
+                                            "submissionandroiddeveloperexpert://favorites".toUri()
+                                        startActivity(Intent(Intent.ACTION_VIEW, uri))
                                     } catch (e: ClassNotFoundException) {
                                         e.printStackTrace()
                                     }
                                 } else {
-                                    navController.navigate(command.route) {
-                                        command.navOptions(this)
-                                    }
+                                    navController.navigate(command.route)
                                 }
                             }
                             NavigationCommand.NavigateUp -> {
