@@ -123,11 +123,17 @@ fun DetailScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize().testTag("DetailScaffold"),
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("DetailScaffold"),
         topBar = {
             TopAppBar(
-                modifier = Modifier.fillMaxWidth().testTag("DetailTopAppBar"),
-                title = { Text(stringResource(R.string.detail), modifier = Modifier.fillMaxWidth().testTag("DetailTitleText"), textAlign = TextAlign.Center) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("DetailTopAppBar"),
+                title = { Text(stringResource(R.string.detail), modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("DetailTitleText"), textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navigationManager.navigateUp() }, modifier = Modifier.testTag("DetailBackButton")) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -174,7 +180,9 @@ fun DetailScreen(
                 EmptyOrErrorState(
                     message = message,
                     onClickRetry = { viewModel.sendIntent(DetailIntent.GetDetail(gameId)) },
-                    modifier = Modifier.align(Alignment.Center).testTag("DetailError")
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .testTag("DetailError")
                 )
             }
 
@@ -321,7 +329,9 @@ fun GameDetailContent(
         )
         Height(8)
         Row(
-            modifier = Modifier.fillMaxWidth().testTag("DetailHeaderRow"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("DetailHeaderRow"),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -378,11 +388,15 @@ fun GameDetailContent(
         }
         
         Column(
-            modifier = Modifier.fillMaxWidth().testTag("DetailMainInfo"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("DetailMainInfo"),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().testTag("DetailNameRow"),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("DetailNameRow"),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -391,14 +405,18 @@ fun GameDetailContent(
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     maxLines = 3,
-                    modifier = Modifier.weight(1f).testTag("DetailName")
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("DetailName")
                 )
 
                 if (game.ratingTop in listOf(5,4)) {
                     Image(
                         painter = painterResource(id = ratingTopImage),
                         contentDescription = stringResource(R.string.review),
-                        modifier = Modifier.size(30.dp).testTag("DetailRatingImage"),
+                        modifier = Modifier
+                            .size(30.dp)
+                            .testTag("DetailRatingImage"),
                         alignment = Alignment.Center,
                         contentScale = ContentScale.Crop
                     )
@@ -414,11 +432,15 @@ fun GameDetailContent(
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth().testTag("DetailReviewRow"),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("DetailReviewRow"),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column(
-                    modifier = Modifier.weight(1f).testTag("DetailReviewSection"),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("DetailReviewSection"),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(text = stringResource(R.string.review), style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag("DetailReviewLabel"))
@@ -429,7 +451,9 @@ fun GameDetailContent(
                     }
                 }
                 Column(
-                    modifier = Modifier.weight(1f).testTag("DetailReleasedSection"),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("DetailReleasedSection"),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.End
                 ) {
@@ -438,18 +462,24 @@ fun GameDetailContent(
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth().testTag("DetailAgeModifiedRow"),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("DetailAgeModifiedRow"),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Column(
-                    modifier = Modifier.weight(1f).testTag("DetailAgeRatingSection"),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("DetailAgeRatingSection"),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text(text = stringResource(R.string.age_rating), style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag("DetailAgeRatingLabel"))
                     Text(text = "${game.esrbRating}", style = MaterialTheme.typography.bodySmall, modifier = Modifier.testTag("DetailAgeRatingValue"))
                 }
                 Column(
-                    modifier = Modifier.weight(1f).testTag("DetailLastModifiedSection"),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag("DetailLastModifiedSection"),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.End
                 ) {
@@ -534,18 +564,9 @@ fun GameDetailContent(
                                 .background(Color.Black)
                                 .testTag("DetailVideoPlayer")
                         ) {
-                            @OptIn(UnstableApi::class)
-                            ContentFrame(
+                            ContentFrameCustom(
                                 player = player,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .clickable(
-                                        interactionSource = null,
-                                        indication = null
-                                    ) {
-                                        isPlayerUiVisible = !isPlayerUiVisible
-                                    },
-                                contentScale = ContentScale.FillBounds
+                                onClick = { isPlayerUiVisible = !isPlayerUiVisible }
                             )
                             Column(
                                 modifier = Modifier
@@ -563,12 +584,10 @@ fun GameDetailContent(
                                         currentPosition = currentPosition,
                                         duration = duration,
                                         onSeekBarPositionChange = {
-                                            isSeeking = true
                                             currentPosition = it
                                         },
                                         onSeekBarPositionChangeFinished = {
                                             player.seekTo(it)
-                                            isSeeking = false
                                         },
                                         onPlayPauseClick = {
                                             when {
@@ -606,6 +625,24 @@ fun GameDetailContent(
             }
         }
     }
+}
+
+@OptIn(UnstableApi::class)
+@Composable
+fun ContentFrameCustom(
+    player: Player,
+    onClick: () -> Unit
+) {
+    ContentFrame(
+        player = player,
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = null,
+                indication = null
+            ) { onClick() },
+        contentScale = ContentScale.FillBounds
+    )
 }
 
 @Composable

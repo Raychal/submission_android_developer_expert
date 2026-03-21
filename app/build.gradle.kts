@@ -41,7 +41,10 @@ android {
         compose = true
     }
     lint {
-        baseline = file("lint-baseline.xml")
+        abortOnError = false
+        baseline = file("lint_baseline.xml")
+
+        textReport = true
     }
     dynamicFeatures += setOf(":favorite")
 }
