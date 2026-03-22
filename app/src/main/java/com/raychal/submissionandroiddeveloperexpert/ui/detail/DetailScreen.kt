@@ -5,7 +5,10 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +37,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -45,6 +49,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -71,7 +76,6 @@ import androidx.compose.ui.util.lerp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.ContentFrame
 import coil.compose.AsyncImage
@@ -101,6 +105,10 @@ fun DetailScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val networkStatus by viewModel.networkStatus.collectAsStateWithLifecycle()
+
+    val verticalScrollState = rememberScrollState()
+
+    val isShowButtonFavorite by remember { derivedStateOf { !verticalScrollState.isScrollInProgress } }
 
     LaunchedEffect(gameId) {
         viewModel.sendIntent(DetailIntent.GetDetail(gameId))
@@ -139,25 +147,34 @@ fun DetailScreen(
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                actions = {
-                    state.game?.let { game ->
-                        IconButton(onClick = { viewModel.sendIntent(DetailIntent.ToggleFavorite(game)) }, modifier = Modifier.testTag("DetailFavoriteButton")) {
-                            Icon(
-                                imageVector = if (game.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = stringResource(R.string.favorite),
-                                tint = if (game.isFavorite) Color.Red else LocalContentColor.current
-                            )
-                        }
-                    }
-                },
                 windowInsets = WindowInsets(0,0,0,0),
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Background,
                     navigationIconContentColor = Color.White,
-                    actionIconContentColor = Color.White,
                     titleContentColor = Color.White
                 )
             )
+        },
+        floatingActionButton = {
+            state.game?.let { game ->
+                AnimatedVisibility(
+                    visible = isShowButtonFavorite,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                ) {
+                    FloatingActionButton(
+                        onClick = { viewModel.sendIntent(DetailIntent.ToggleFavorite(game)) },
+                        containerColor = Background,
+                        contentColor = Color.White
+                    ) {
+                        Icon(
+                            imageVector = if (game.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = stringResource(R.string.favorite),
+                            tint = if (game.isFavorite) Color.Red else LocalContentColor.current
+                        )
+                    }
+                }
+            }
         },
         containerColor = Background,
         contentColor = Color.White
@@ -187,7 +204,11 @@ fun DetailScreen(
             }
 
             state.game?.let { game ->
-                GameDetailContent(game = game, networkObserver = networkStatus)
+                GameDetailContent(
+                    game = game,
+                    networkObserver = networkStatus,
+                    verticalState = verticalScrollState
+                )
             }
         }
     }
@@ -197,7 +218,8 @@ fun DetailScreen(
 @Composable
 fun GameDetailContent(
     game: Game,
-    networkObserver: NetworkObserver.Status
+    networkObserver: NetworkObserver.Status,
+    verticalState: ScrollState,
 ) {
 
     val context = LocalContext.current
@@ -314,7 +336,7 @@ fun GameDetailContent(
             .fillMaxSize()
             .testTag("DetailContent")
             .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(verticalState),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         AsyncImage(
@@ -386,7 +408,7 @@ fun GameDetailContent(
                 }
             }
         }
-        
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -627,7 +649,6 @@ fun GameDetailContent(
     }
 }
 
-@OptIn(UnstableApi::class)
 @Composable
 fun ContentFrameCustom(
     player: Player,
