@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.dynamic.feature)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kover)
 }
 android {
     namespace = "com.raychal.favorite"

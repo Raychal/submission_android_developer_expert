@@ -4,7 +4,7 @@ orbs:
   android: circleci/android@2.5.0
 
 jobs:
-  build:
+  build_and_test:
     docker:
       - image: cimg/android:2026.03.1
     resource_class: large
@@ -23,20 +23,8 @@ jobs:
           command: sudo chmod +x ./gradlew
 
       - run:
-          name: Run Lint
-          command: ./gradlew lint lintDebug
-
-      - run:
-          name: Run Tests and Generate Coverage
-          command: ./gradlew koverHtmlReportDebug --continue
-
-      - run:
-          name: Run All Debug Unit Tests
-          command: ./gradlew testDebugUnitTest --continue
-
-      - run:
-          name: Build Debug APK and Bundle
-          command: ./gradlew assembleDebug bundleDebug
+          name: Run Quality Check & Build
+          command: ./gradlew lintDebug testDebugUnitTest koverHtmlReportDebug assembleDebug bundleDebug --continue
 
       - run:
           name: Gather Test & Lint Results
@@ -48,7 +36,17 @@ jobs:
             
             find . -type d -name "test-results" -exec cp -r {} ~/results/junit/ \;
             find . -type f -name "lint-results-debug.*" -exec cp {} ~/results/lint/ \;
-            cp -r build/reports/kover/htmlDebug/* ~/results/coverage/ || true
+            find . -path "*/build/reports/kover/htmlDebug" -type d -exec cp -r {}/. ~/results/coverage/ \;
+            
+            if [ -d "build/reports/kover/htmlDebug" ]; then
+              echo "Mengambil laporan gabungan dari Root..."
+              cp -r build/reports/kover/htmlDebug/* ~/results/coverage/
+            else
+              mkdir -p ~/results/coverage/app ~/results/coverage/core ~/results/coverage/favorite
+              [ -d "app/build/reports/kover/htmlDebug" ] && cp -r app/build/reports/kover/htmlDebug/* ~/results/coverage/app/
+              [ -d "core/build/reports/kover/htmlDebug" ] && cp -r core/build/reports/kover/htmlDebug/* ~/results/coverage/core/
+              [ -d "favorite/build/reports/kover/htmlDebug" ] && cp -r favorite/build/reports/kover/htmlDebug/* ~/results/coverage/favorite/
+            fi
 
       - store_test_results:
           path: ~/results/junit
@@ -70,3 +68,8 @@ jobs:
           destination: builds/debug-aab
 
       - android/save-gradle-cache
+
+workflows:
+  main:
+    jobs:
+      - build_and_test

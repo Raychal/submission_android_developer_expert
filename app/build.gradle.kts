@@ -25,14 +25,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
@@ -58,7 +50,24 @@ android {
     dynamicFeatures += setOf(":favorite")
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "*.BuildConfig",
+                    "*.R",
+                    "*.R$*",
+                    "com.raychal.submissionandroiddeveloperexpert.ComposableSingletons*"
+                )
+            }
+        }
+    }
+}
+
 dependencies {
+    kover(project(":app"))
+    kover(project(":core"))
     implementation(project(":core"))
 
     implementation(libs.androidx.core.ktx)
