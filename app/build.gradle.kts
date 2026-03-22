@@ -68,6 +68,7 @@ kover {
 dependencies {
     kover(project(":app"))
     kover(project(":core"))
+    kover(project(":favorite"))
     implementation(project(":core"))
 
     implementation(libs.androidx.core.ktx)

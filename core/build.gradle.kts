@@ -46,6 +46,21 @@ android {
         compose = true
         buildConfig = true
     }
+
+    kover {
+        reports {
+            filters {
+                excludes {
+                    classes(
+                        "*.BuildConfig",
+                        "*.R",
+                        "*.R$*",
+                        "com.raychal.submissionandroiddeveloperexpert.ComposableSingletons*"
+                    )
+                }
+            }
+        }
+    }
 }
 
 dependencies {
