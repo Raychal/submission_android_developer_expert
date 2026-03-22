@@ -2,10 +2,12 @@ package com.raychal.core.utils
 
 import com.raychal.core.data.source.local.entity.GameEntity
 import com.raychal.core.data.source.remote.response.GameResponse
+import com.raychal.core.data.source.remote.response.ListGenreResponse
 import com.raychal.core.data.source.remote.response.MoviesGameResponse
 import com.raychal.core.data.source.remote.response.ScreenshotsGameResponse
 import com.raychal.core.domain.model.Game
 import com.raychal.core.domain.model.GameMovie
+import com.raychal.core.domain.model.Genre
 
 object DataMapper {
     fun mapEntitiesToDomain(input: List<GameEntity>): List<Game> =
@@ -80,4 +82,10 @@ object DataMapper {
             )
         } ?: listOf()
     )
+
+    fun mapGenreResponseToDomain(input: List<ListGenreResponse.GenreResponse>): List<Genre> {
+        return input.map {
+            Genre(id = it.id, name = it.name)
+        }
+    }
 }

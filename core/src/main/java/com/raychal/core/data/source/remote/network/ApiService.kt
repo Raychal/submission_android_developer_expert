@@ -2,6 +2,7 @@ package com.raychal.core.data.source.remote.network
 
 import com.raychal.core.data.source.remote.response.GameResponse
 import com.raychal.core.data.source.remote.response.ListGameResponse
+import com.raychal.core.data.source.remote.response.ListGenreResponse
 import com.raychal.core.data.source.remote.response.MoviesGameResponse
 import com.raychal.core.data.source.remote.response.ScreenshotsGameResponse
 import retrofit2.http.GET
@@ -13,8 +14,12 @@ interface ApiService {
     suspend fun getGames(
         @Query("page") page: Int? = null,
         @Query("page_size") pageSize: Int? = null,
-        @Query("search") search: String? = null
+        @Query("search") search: String? = null,
+        @Query("genres") genres: String? = null
     ): ListGameResponse
+
+    @GET("genres")
+    suspend fun getGenres(): ListGenreResponse
 
     @GET("games/{id}")
     suspend fun getDetailGame(

@@ -3,10 +3,16 @@ package com.raychal.submissionandroiddeveloperexpert.ui.home
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,33 +22,46 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.raychal.core.R
 import com.raychal.core.navigation.NavigationManager
 import com.raychal.core.navigation.Screen
+import com.raychal.core.ui.components.FilterChips
 import com.raychal.core.ui.components.GameItem
 import com.raychal.core.ui.components.LineScaleProgressIndicator
 import com.raychal.core.ui.components.LoadingCard
 import com.raychal.core.ui.components.LottieNotFoundAnimation
 import com.raychal.core.ui.components.Width
 import com.raychal.core.ui.theme.Background
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import java.io.IOException
@@ -56,14 +75,32 @@ fun HomeScreen(
     navigationManager: NavigationManager = koinInject()
 ) {
     val context = LocalContext.current
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val games = viewModel.gamesPagingData.collectAsLazyPagingItems()
     val isRefreshing = games.loadState.refresh is LoadState.Loading && games.itemCount > 0
 
     val lazyListState = rememberLazyListState()
+    val lazyVerticalStaggeredState = rememberLazyStaggeredGridState()
     val pullToRefreshState = rememberPullToRefreshState()
 
     val youAreOfflineText = stringResource(R.string.you_are_offline)
     val serverErrorText = stringResource(R.string.server_error)
+
+    val showButton by remember {
+        derivedStateOf {
+            lazyVerticalStaggeredState.firstVisibleItemIndex > 20
+        }
+    }
+
+    val isButtonVisible = showButton && !lazyVerticalStaggeredState.isScrollInProgress
+
+    val scope = rememberCoroutineScope()
+
+    val verticalOffset = if (isRefreshing) {
+        60.dp
+    } else {
+        (pullToRefreshState.distanceFraction * 50).dp
+    }
 
     LaunchedEffect(games.loadState) {
         val errorState = games.loadState.append as? LoadState.Error
@@ -76,83 +113,143 @@ fun HomeScreen(
 
     val isInitialLoad = games.loadState.refresh is LoadState.Loading && games.itemCount == 0
 
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = { games.refresh() },
-        modifier = Modifier.fillMaxSize().testTag("PullToRefreshBox"),
-        indicator = {
-            PullToRefreshIndicator(
-                progress = pullToRefreshState.distanceFraction,
-                isRefreshing = isRefreshing,
-                modifier = Modifier.testTag("PullToRefreshIndicator")
-            )
-        },
-        state = pullToRefreshState
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().testTag("GameList"),
-            state = lazyListState,
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            items(
-                count = games.itemCount,
-                key = { index -> games[index]?.id ?: index }
-            ) { index ->
-                val game = games[index] ?: return@items
-                GameItem(
-                    game = game,
-                    modifier = Modifier
-                        .testTag("GameItem")
-                        .clickable {
-                            navigationManager.navigate(Screen.Detail(game.id))
-                        }
-                )
-            }
+        if (state.genres.isNotEmpty()) {
+            val genrePairs = state.genres.map { it.name to it.id.toString() }
 
-            when (games.loadState.append) {
-                is LoadState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            LineScaleProgressIndicator()
-                        }
-                    }
+            FilterChips(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                dataList = genrePairs,
+                activeState = state.selectedGenre,
+                onStateChanged = { selectedSlug ->
+                    viewModel.sendIntent(HomeIntent.SelectGenre(selectedSlug))
                 }
-                else -> {}
-            }
+            )
         }
 
-        when (val state = games.loadState.refresh) {
-            is LoadState.Loading -> {
-                if (isInitialLoad) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize().testTag("LoadingList"),
-                        contentPadding = PaddingValues(16.dp)
-                    ) {
-                        items(4) {
-                            LoadingCard(
-                                heightForPicture = 200
-                            )
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                viewModel.sendIntent(HomeIntent.Refresh())
+                games.refresh()
+            },
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("PullToRefreshBox"),
+            indicator = {
+                PullToRefreshIndicator(
+                    progress = pullToRefreshState.distanceFraction,
+                    isRefreshing = isRefreshing,
+                    modifier = Modifier.testTag("PullToRefreshIndicator")
+                )
+            },
+            state = pullToRefreshState
+        ) {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .graphicsLayer {
+                        translationY = verticalOffset.toPx()
+                    }
+                    .testTag("GameList"),
+                state = lazyVerticalStaggeredState
+            ) {
+                items(
+                    count = games.itemCount,
+                    key = { index -> games[index]?.id ?: index }
+                ) { index ->
+                    val game = games[index] ?: return@items
+                    GameItem(
+                        game = game,
+                        modifier = Modifier
+                            .testTag("GameItem")
+                            .clickable {
+                                navigationManager.navigate(Screen.Detail(game.id))
+                            }
+                    )
+                }
+
+                when (games.loadState.append) {
+                    is LoadState.Loading -> {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LineScaleProgressIndicator()
+                            }
                         }
+                    }
+                    else -> {}
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd).padding(bottom = 60.dp)
+            ) {
+                AnimatedVisibility(
+                    visible = isButtonVisible,
+                    enter = fadeIn() + scaleIn(),
+                    exit = fadeOut() + scaleOut(),
+                ) {
+                    FloatingActionButton(
+                        onClick = {
+                            scope.launch {
+                                lazyVerticalStaggeredState.animateScrollToItem(0)
+                            }
+                        },
+                        containerColor = Background,
+                        contentColor = Color.White
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowUp,
+                            contentDescription = stringResource(R.string.scroll_to_top)
+                        )
                     }
                 }
             }
-            is LoadState.Error -> {
-                if (games.itemCount == 0) {
-                    LottieNotFoundAnimation(
-                        lottieFile = R.raw.no_connection,
-                        message = if (state.error is IOException) youAreOfflineText else serverErrorText,
-                        modifier = Modifier.testTag("ErrorAnimation")
-                    )
+
+            when (val state = games.loadState.refresh) {
+                is LoadState.Loading -> {
+                    if (isInitialLoad) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .testTag("LoadingList"),
+                            contentPadding = PaddingValues(16.dp)
+                        ) {
+                            items(4) {
+                                LoadingCard(
+                                    heightForPicture = 200
+                                )
+                            }
+                        }
+                    }
                 }
-            }
-            is LoadState.NotLoading -> {
-                if (games.itemCount == 0) {
-                    LottieNotFoundAnimation(modifier = Modifier.testTag("EmptyAnimation"))
+                is LoadState.Error -> {
+                    if (games.itemCount == 0) {
+                        LottieNotFoundAnimation(
+                            lottieFile = R.raw.no_connection,
+                            message = if (state.error is IOException) youAreOfflineText else serverErrorText,
+                            modifier = Modifier.testTag("ErrorAnimation")
+                        )
+                    }
+                }
+                is LoadState.NotLoading -> {
+                    if (games.itemCount == 0) {
+                        LottieNotFoundAnimation(modifier = Modifier.testTag("EmptyAnimation"))
+                    }
                 }
             }
         }
@@ -200,6 +297,5 @@ fun PullToRefreshIndicator(progress: Float, isRefreshing: Boolean, modifier: Mod
                 )
             }
         }
-
     }
 }

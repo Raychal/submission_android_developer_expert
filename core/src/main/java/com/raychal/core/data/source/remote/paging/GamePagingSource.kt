@@ -8,7 +8,8 @@ import com.raychal.core.utils.DataMapper
 
 class GamePagingSource(
     private val apiService: ApiService,
-    private val search: String?
+    private val search: String?,
+    private val genres: String?
 ) : PagingSource<Int, Game>() {
 
     override fun getRefreshKey(state: PagingState<Int, Game>): Int? {
@@ -24,7 +25,8 @@ class GamePagingSource(
             val response = apiService.getGames(
                 page = position,
                 pageSize = params.loadSize,
-                search = search
+                search = search,
+                genres = genres
             )
             val games = response.results.map { DataMapper.mapResponseToDomain(it) }
 
