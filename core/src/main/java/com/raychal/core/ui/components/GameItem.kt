@@ -44,6 +44,7 @@ import com.raychal.core.domain.model.Game
 import com.raychal.core.ui.theme.StarGold
 import com.raychal.core.ui.theme.BackgroundCard
 import com.raychal.core.ui.theme.BackgroundDark
+import com.raychal.core.utils.formatGameDate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -243,18 +244,5 @@ fun StarRatingBar(
                 Spacer(modifier = Modifier.width(starSpacing))
             }
         }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-private fun formatGameDate(dateString: String?): String {
-    if (dateString.isNullOrEmpty()) return "N/A"
-    return try {
-        val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val outputFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
-        val date = LocalDate.parse(dateString, inputFormatter)
-        date.format(outputFormatter)
-    } catch (_: Exception) {
-        dateString
     }
 }

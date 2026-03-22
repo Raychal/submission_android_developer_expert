@@ -1,7 +1,9 @@
 package com.raychal.submissionandroiddeveloperexpert.ui.detail
 
+import android.os.Build
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -90,12 +92,14 @@ import com.raychal.core.ui.components.LoadingCard
 import com.raychal.core.ui.components.StarRatingBar
 import com.raychal.core.ui.components.Width
 import com.raychal.core.ui.theme.Background
+import com.raychal.core.utils.formatGameDate
 import com.raychal.core.utils.network.NetworkObserver
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import kotlin.math.absoluteValue
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
@@ -214,6 +218,7 @@ fun DetailScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameDetailContent(
@@ -480,7 +485,7 @@ fun GameDetailContent(
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(text = stringResource(R.string.released), style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag("DetailReleasedLabel"))
-                    Text(text = "${game.released}", style = MaterialTheme.typography.bodySmall, modifier = Modifier.testTag("DetailReleasedValue"))
+                    Text(text = formatGameDate(game.released), style = MaterialTheme.typography.bodySmall, modifier = Modifier.testTag("DetailReleasedValue"))
                 }
             }
             Row(
@@ -506,7 +511,7 @@ fun GameDetailContent(
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(text = stringResource(R.string.last_modified), style = MaterialTheme.typography.labelLarge, modifier = Modifier.testTag("DetailLastModifiedLabel"))
-                    Text(text = "${game.updated}", style = MaterialTheme.typography.bodySmall, modifier = Modifier.testTag("DetailLastModifiedValue"))
+                    Text(text = formatGameDate(game.updated), style = MaterialTheme.typography.bodySmall, modifier = Modifier.testTag("DetailLastModifiedValue"))
                 }
             }
             Column(
