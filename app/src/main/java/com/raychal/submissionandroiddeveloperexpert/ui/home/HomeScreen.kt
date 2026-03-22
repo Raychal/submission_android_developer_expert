@@ -223,15 +223,19 @@ fun HomeScreen(
             when (val state = games.loadState.refresh) {
                 is LoadState.Loading -> {
                     if (isInitialLoad) {
-                        LazyColumn(
+                        LazyVerticalStaggeredGrid(
+                            columns = StaggeredGridCells.Fixed(2),
                             modifier = Modifier
                                 .fillMaxSize()
-                                .testTag("LoadingList"),
-                            contentPadding = PaddingValues(16.dp)
+                                .graphicsLayer {
+                                    translationY = verticalOffset.toPx()
+                                }
+                                .testTag("GameList"),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            items(4) {
+                            items(20) {
                                 LoadingCard(
-                                    heightForPicture = 200
+                                    heightForPicture = 100
                                 )
                             }
                         }
