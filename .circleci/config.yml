@@ -7,32 +7,56 @@ jobs:
   build:
     docker:
       - image: cimg/android:2026.03.1
+    resource_class: large
     steps:
       - checkout
       - run:
-            name: Create local.properties
-            command: |
-              echo "BASE_URL=${BASE_URL}" >> local.properties
-              echo "API_KEY=${API_KEY}" >> local.properties
+          name: Create local.properties
+          command: |
+            echo "BASE_URL=${BASE_URL}" >> local.properties
+            echo "API_KEY=${API_KEY}" >> local.properties
+
       - android/restore-gradle-cache
+
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
+
       - run:
-          name: Download Dependencies
-          command: ./gradlew dependencies
-      - android/save-gradle-cache
+          name: Run Lint Debug
+          command: ./gradlew lintDebug
+
       - run:
-          name: Run Build
-          command: ./gradlew build
-      - store_artifacts:
-          path: app/build/reports
-          destination: reports
+          name: Run All Debug Unit Tests
+          command: ./gradlew testDebugUnitTest --continue
+
       - run:
-          name: Run Tests
-          command: ./gradlew lint test
+          name: Build Debug APK and Bundle
+          command: ./gradlew assembleDebug bundleDebug
+
+      - run:
+          name: Gather Test & Lint Results
+          when: always
+          command: |
+            mkdir -p ~/test-results/junit/
+            mkdir -p ~/test-results/lint/
+            # Mengambil hasil Unit Test (.xml)
+            find . -type d -name "test-results" -exec cp -r {} ~/test-results/junit/ \;
+            # Mengambil laporan Lint (.html atau .xml)
+            find . -type f -name "lint-results-debug.*" -exec cp {} ~/test-results/lint/ \;
+
       - store_test_results:
-          path: app/build/test-results
+          path: ~/test-results/junit
+
       - store_artifacts:
           path: app/build/outputs/apk/debug/
-          destination: artifact-file
+          destination: builds/debug-apk
+      - store_artifacts:
+          path: app/build/outputs/bundle/debug/
+          destination: builds/debug-aab
+
+      - store_artifacts:
+          path: ~/test-results/lint
+          destination: lint-reports
+
+      - android/save-gradle-cache

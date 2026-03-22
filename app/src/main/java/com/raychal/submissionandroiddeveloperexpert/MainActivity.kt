@@ -3,6 +3,7 @@ package com.raychal.submissionandroiddeveloperexpert
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -39,6 +40,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.raychal.core.R
 import com.raychal.core.navigation.NavigationCommand
 import com.raychal.core.navigation.NavigationManager
@@ -78,9 +81,7 @@ class MainActivity : ComponentActivity() {
                             is NavigationCommand.Navigate -> {
                                 if (command.route is Screen.Favorite) {
                                     try {
-                                        val uri =
-                                            "submissionandroiddeveloperexpert://favorites".toUri()
-                                        startActivity(Intent(Intent.ACTION_VIEW, uri))
+                                        installFavoriteModule()
                                     } catch (e: ClassNotFoundException) {
                                         e.printStackTrace()
                                     }
@@ -161,6 +162,33 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    fun moveToFavoriteActivity() {
+        val uri =
+            "submissionandroiddeveloperexpert://favorites".toUri()
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
+    }
+
+    private fun installFavoriteModule() {
+        val splitInstallManager = SplitInstallManagerFactory.create(this)
+        val moduleFavorite = "favorite"
+        if (splitInstallManager.installedModules.contains(moduleFavorite)) {
+            moveToFavoriteActivity()
+            Toast.makeText(this, "Open module", Toast.LENGTH_SHORT).show()
+        } else {
+            val request = SplitInstallRequest.newBuilder()
+                .addModule(moduleFavorite)
+                .build()
+            splitInstallManager.startInstall(request)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Success installing module", Toast.LENGTH_SHORT).show()
+                    moveToFavoriteActivity()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Error installing module", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }
