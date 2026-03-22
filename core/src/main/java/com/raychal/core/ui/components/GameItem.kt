@@ -41,13 +41,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.raychal.core.R
 import com.raychal.core.domain.model.Game
-import com.raychal.core.ui.theme.StarGold
 import com.raychal.core.ui.theme.BackgroundCard
 import com.raychal.core.ui.theme.BackgroundDark
+import com.raychal.core.ui.theme.StarGold
 import com.raychal.core.utils.formatGameDate
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
