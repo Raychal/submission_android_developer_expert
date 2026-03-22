@@ -23,8 +23,8 @@ jobs:
           command: sudo chmod +x ./gradlew
 
       - run:
-          name: Run Lint Debug
-          command: ./gradlew lintDebug
+          name: Run Lint
+          command: ./gradlew lint test
 
       - run:
           name: Run All Debug Unit Tests
@@ -40,9 +40,7 @@ jobs:
           command: |
             mkdir -p ~/test-results/junit/
             mkdir -p ~/test-results/lint/
-            # Mengambil hasil Unit Test (.xml)
             find . -type d -name "test-results" -exec cp -r {} ~/test-results/junit/ \;
-            # Mengambil laporan Lint (.html atau .xml)
             find . -type f -name "lint-results-debug.*" -exec cp {} ~/test-results/lint/ \;
 
       - store_test_results:
