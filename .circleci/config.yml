@@ -42,12 +42,12 @@ jobs:
           name: Gather Test & Lint Results
           when: always
           command: |
-            mkdir -p ~/test-results/junit/
-            mkdir -p ~/test-results/lint/
+            mkdir -p ~/results/junit/
+            mkdir -p ~/results/lint/
             mkdir -p ~/results/coverage/
             
-            find . -type d -name "test-results" -exec cp -r {} ~/test-results/junit/ \;
-            find . -type f -name "lint-results-debug.*" -exec cp {} ~/test-results/lint/ \;
+            find . -type d -name "test-results" -exec cp -r {} ~/results/junit/ \;
+            find . -type f -name "lint-results-debug.*" -exec cp {} ~/results/lint/ \;
             cp -r build/reports/kover/htmlDebug/* ~/results/coverage/ || true
 
       - store_test_results:
