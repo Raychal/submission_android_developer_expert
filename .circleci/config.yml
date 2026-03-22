@@ -24,7 +24,11 @@ jobs:
 
       - run:
           name: Run Lint
-          command: ./gradlew lint test
+          command: ./gradlew lint lintDebug
+
+      - run:
+          name: Run Tests and Generate Coverage
+          command: ./gradlew koverHtmlReportDebug --continue
 
       - run:
           name: Run All Debug Unit Tests
@@ -40,21 +44,29 @@ jobs:
           command: |
             mkdir -p ~/test-results/junit/
             mkdir -p ~/test-results/lint/
+            mkdir -p ~/results/coverage/
+            
             find . -type d -name "test-results" -exec cp -r {} ~/test-results/junit/ \;
             find . -type f -name "lint-results-debug.*" -exec cp {} ~/test-results/lint/ \;
+            cp -r build/reports/kover/htmlDebug/* ~/results/coverage/ || true
 
       - store_test_results:
-          path: ~/test-results/junit
+          path: ~/results/junit
+
+      - store_artifacts:
+          path: ~/results/coverage
+          destination: code-coverage-report
+
+      - store_artifacts:
+          path: ~/results/lint
+          destination: lint-reports
 
       - store_artifacts:
           path: app/build/outputs/apk/debug/
           destination: builds/debug-apk
+
       - store_artifacts:
           path: app/build/outputs/bundle/debug/
           destination: builds/debug-aab
-
-      - store_artifacts:
-          path: ~/test-results/lint
-          destination: lint-reports
 
       - android/save-gradle-cache
