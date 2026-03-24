@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kover)
 }
 
 android {
@@ -50,25 +49,7 @@ android {
     dynamicFeatures += setOf(":favorite")
 }
 
-kover {
-    reports {
-        filters {
-            excludes {
-                classes(
-                    "*.BuildConfig",
-                    "*.R",
-                    "*.R$*",
-                    "com.raychal.submissionandroiddeveloperexpert.ComposableSingletons*"
-                )
-            }
-        }
-    }
-}
-
 dependencies {
-    kover(project(":app"))
-    kover(project(":core"))
-    kover(project(":favorite"))
     implementation(project(":core"))
 
     implementation(libs.androidx.core.ktx)

@@ -24,7 +24,7 @@ jobs:
 
       - run:
           name: Run Quality Check & Build
-          command: ./gradlew lintDebug testDebugUnitTest koverHtmlReportDebug assembleDebug bundleDebug --continue
+          command: ./gradlew lintDebug testDebugUnitTest assembleDebug bundleDebug --continue
 
       - run:
           name: Gather Test & Lint Results
@@ -32,27 +32,12 @@ jobs:
           command: |
             mkdir -p ~/results/junit/
             mkdir -p ~/results/lint/
-            mkdir -p ~/results/coverage/
             
             find . -type d -name "test-results" -exec cp -r {} ~/results/junit/ \;
             find . -type f -name "lint-results-debug.*" -exec cp {} ~/results/lint/ \;
-            find . -path "*/build/reports/kover/htmlDebug" -type d -exec cp -r {}/. ~/results/coverage/ \;
-            
-            if [ -d "build/reports/kover/htmlDebug" ]; then
-              cp -r build/reports/kover/htmlDebug/* ~/results/coverage/
-            else
-              mkdir -p ~/results/coverage/app ~/results/coverage/core ~/results/coverage/favorite
-              [ -d "app/build/reports/kover/htmlDebug" ] && cp -r app/build/reports/kover/htmlDebug/* ~/results/coverage/app/
-              [ -d "core/build/reports/kover/htmlDebug" ] && cp -r core/build/reports/kover/htmlDebug/* ~/results/coverage/core/
-              [ -d "favorite/build/reports/kover/htmlDebug" ] && cp -r favorite/build/reports/kover/htmlDebug/* ~/results/coverage/favorite/
-            fi
 
       - store_test_results:
           path: ~/results/junit
-
-      - store_artifacts:
-          path: ~/results/coverage
-          destination: code-coverage-report
 
       - store_artifacts:
           path: ~/results/lint

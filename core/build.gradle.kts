@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kover)
 }
 
 android {
@@ -45,21 +44,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-
-    kover {
-        reports {
-            filters {
-                excludes {
-                    classes(
-                        "*.BuildConfig",
-                        "*.R",
-                        "*.R$*",
-                        "com.raychal.submissionandroiddeveloperexpert.ComposableSingletons*"
-                    )
-                }
-            }
-        }
     }
 }
 
